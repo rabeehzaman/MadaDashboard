@@ -1,0 +1,673 @@
+{
+  "darkModeActive": true,
+  "tableHeaderAnalysis": [
+    {
+      "index": 0,
+      "text": "Vendor Details",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 1,
+      "text": "Total Outstanding",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 2,
+      "text": "Current (0-30)",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 3,
+      "text": "31-60 Days",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 4,
+      "text": "61-90 Days",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 5,
+      "text": "Over 90 Days",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 6,
+      "text": "Risk Level",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "font-semibold",
+        "text-gray-900",
+        "dark:text-gray-100"
+      ],
+      "computedColor": "lab(8.11897 0.811279 -12.254)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": true,
+      "hasDarkTextGray100": true,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center",
+        "text-gray-900"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 7,
+      "text": "Vendor",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "w-[180px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 8,
+      "text": "YTD Billed",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[90px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 9,
+      "text": "YTD Paid",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[90px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 10,
+      "text": "Outstanding",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[90px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 11,
+      "text": "Pay Rate",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[70px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 12,
+      "text": "Cash Days",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 13,
+      "text": "Velocity",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 14,
+      "text": "Status",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[100px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 15,
+      "text": "Vendor",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "w-[180px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 16,
+      "text": "Score",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[70px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 17,
+      "text": "Bills",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[70px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 18,
+      "text": "Pay Days",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 19,
+      "text": "Overdue %",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 20,
+      "text": "Business %",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 21,
+      "text": "Pay Rate",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[80px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 22,
+      "text": "Outstanding",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-right",
+        "w-[90px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-right"
+      ],
+      "cssText": ""
+    },
+    {
+      "index": 23,
+      "text": "Status",
+      "classList": [
+        "text-foreground",
+        "h-10",
+        "px-2",
+        "text-left",
+        "align-middle",
+        "font-medium",
+        "whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "[&>[role=checkbox]]:translate-y-[2px]",
+        "text-center",
+        "w-[100px]"
+      ],
+      "computedColor": "lab(77.7387 -0.237763 5.4412)",
+      "computedBackgroundColor": "rgba(0, 0, 0, 0)",
+      "hasTextGray900": false,
+      "hasDarkTextGray100": false,
+      "allTextClasses": [
+        "text-foreground",
+        "text-left",
+        "text-center"
+      ],
+      "cssText": ""
+    }
+  ],
+  "cssRules": [],
+  "colorTests": {
+    "foregroundColor": "lab(77.7387 -0.237763 5.4412)",
+    "grayWithDarkColor": "lab(8.11897 0.811279 -12.254)"
+  }
+}

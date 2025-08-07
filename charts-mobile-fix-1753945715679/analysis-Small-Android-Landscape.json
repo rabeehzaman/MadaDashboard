@@ -1,0 +1,18 @@
+{
+  "viewport": {
+    "width": 640,
+    "height": 360
+  },
+  "card": {
+    "width": 606,
+    "height": 76,
+    "left": 17,
+    "right": 623,
+    "overflowsRight": false,
+    "overflowsLeft": false
+  },
+  "tabsList": null,
+  "tabs": [],
+  "tabsCount": 0,
+  "hasOverflowIssues": null
+}

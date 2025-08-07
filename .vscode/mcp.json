@@ -1,0 +1,88 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "supabase-access-token",
+      "description": "Supabase personal access token",
+      "password": true
+    },
+    {
+      "type": "promptString", 
+      "id": "supabase-project-ref",
+      "description": "Supabase project reference ID"
+    }
+  ],
+  "servers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=tqsltmruwqluaeukgrbd",
+        "--features=database,docs,debug,development,functions,branching"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${input:supabase-access-token}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "config": {
+        "browser": {
+          "args": ["--window-size=1568,1568"]
+        },
+        "viewport": {
+          "width": 1568,
+          "height": 1568
+        },
+        "screenshot": {
+          "fullPage": false,
+          "clip": {
+            "x": 0,
+            "y": 0,
+            "width": 1568,
+            "height": 1568
+          }
+        }
+      },
+      "permissions": {
+        "allowedHosts": ["*"],
+        "allowFileSystem": true,
+        "allowNavigation": true,
+        "allowScreenshots": true,
+        "allowDataAccess": true,
+        "allowNetworkAccess": true,
+        "allowClipboard": true,
+        "allowGeolocation": true,
+        "allowNotifications": true,
+        "allowMicrophone": true,
+        "allowCamera": true,
+        "allowDownloads": true,
+        "allowUploads": true,
+        "allowPopups": true,
+        "allowJavaScript": true,
+        "allowCookies": true,
+        "allowLocalStorage": true,
+        "allowSessionStorage": true,
+        "allowWebGL": true,
+        "allowWebAssembly": true,
+        "allowFullscreen": true,
+        "allowPointerLock": true,
+        "allowDeviceMotion": true,
+        "allowDeviceOrientation": true,
+        "allowMIDI": true,
+        "allowBluetooth": true,
+        "allowUSB": true,
+        "allowSerial": true,
+        "allowHID": true,
+        "bypassCSP": true,
+        "ignoreHTTPSErrors": true,
+        "acceptDownloads": true
+      }
+    }
+  }
+}

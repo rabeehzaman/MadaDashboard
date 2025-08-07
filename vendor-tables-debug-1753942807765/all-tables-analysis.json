@@ -1,0 +1,199 @@
+{
+  "darkModeActive": true,
+  "tables": [
+    {
+      "index": 0,
+      "context": "Vendor Payments",
+      "table": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "w-full caption-bottom text-sm"
+      },
+      "parent": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "relative w-full overflow-x-auto"
+      },
+      "card": null,
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 1,
+      "context": "Vendor Bills",
+      "table": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "w-full caption-bottom text-sm"
+      },
+      "parent": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "relative w-full overflow-x-auto"
+      },
+      "card": null,
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 2,
+      "context": "Vendor Bills",
+      "table": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "w-full caption-bottom text-sm"
+      },
+      "parent": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "lab(97.9228 -0.175089 2.05069)",
+        "className": "relative w-full overflow-x-auto"
+      },
+      "card": null,
+      "hasWhiteBackground": false
+    }
+  ],
+  "cards": [
+    {
+      "index": 0,
+      "text": "Outstanding Bills246High RiskOpen: 35 | Overdue: 211",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm border-l-4 hover:shadow-md transition-shadow w-full max-w-full",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 1,
+      "text": "Outstanding Bills",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex flex-row items-center justify-between space-y-0 pb-2",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 2,
+      "text": "Avg Payment Days30.8GoodDays to payment completion",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm border-l-4 hover:shadow-md transition-shadow w-full max-w-full",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 3,
+      "text": "Avg Payment Days",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex flex-row items-center justify-between space-y-0 pb-2",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 4,
+      "text": "Overdue Rate11.5%Warning211 of 1835 bills",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm border-l-4 hover:shadow-md transition-shadow w-full max-w-full",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 5,
+      "text": "Overdue Rate",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex flex-row items-center justify-between space-y-0 pb-2",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 6,
+      "text": "Active Vendors44High ActivityThis month",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm border-l-4 hover:shadow-md transition-shadow w-full max-w-full",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 7,
+      "text": "Active Vendors",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex flex-row items-center justify-between space-y-0 pb-2",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 8,
+      "text": "Payment Success78.3%Needs Work1620 paid bills",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm border-l-4 hover:shadow-md transition-shadow w-full max-w-full",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 9,
+      "text": "Payment Success",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex flex-row items-center justify-between space-y-0 pb-2",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 10,
+      "text": "Vendor Aging BalanceOutstanding balance analysis by aging periods using actual vendor balancesSearch",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700",
+      "hasWhiteBackground": true
+    },
+    {
+      "index": 11,
+      "text": "Vendor Aging BalanceOutstanding balance analysis by aging periods using actual vendor balancesSearch",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 12,
+      "text": "Vendor Financial InsightsCash flow intelligence: actual spending, payments, and outstanding balances",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 13,
+      "text": "Vendor Financial InsightsCash flow intelligence: actual spending, payments, and outstanding balances",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 14,
+      "text": "",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(73.5865 -0.869572 6.41052)",
+      "className": {},
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 15,
+      "text": "Vendor Performance ScorecardTop performing vendors by business impact, payment reliability, and cash",
+      "backgroundColor": "lab(15.1069 -0.35131 1.31722)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+      "hasWhiteBackground": false
+    },
+    {
+      "index": 16,
+      "text": "Vendor Performance ScorecardTop performing vendors by business impact, payment reliability, and cash",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "lab(97.9228 -0.175089 2.05069)",
+      "className": "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+      "hasWhiteBackground": false
+    }
+  ],
+  "whiteBackgroundElements": [
+    {
+      "type": "card",
+      "index": 10,
+      "text": "Vendor Aging BalanceOutstanding balance analysis b",
+      "element": "card"
+    }
+  ]
+}

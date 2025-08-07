@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mada-dashboard-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for live reloading
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./next.config.ts:/app/next.config.ts
+      - ./tailwind.config.ts:/app/tailwind.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./postcss.config.mjs:/app/postcss.config.mjs
+      # Mount .env.local file
+      - ./.env.local:/app/.env.local
+      # Prevent node_modules from being overwritten
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    env_file:
+      - .env.local
+    stdin_open: true
+    tty: true
