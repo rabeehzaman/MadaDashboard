@@ -30,6 +30,7 @@ export default function Home() {
             value={branchFilter}
             onValueChange={setBranchFilter}
             className="w-full sm:w-auto min-h-[44px]"
+            dateRange={dateRange}
           />
           <DateFilter 
             onDateRangeChange={setDateRange}

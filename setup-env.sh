@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Shadcn MCP Environment Setup Script
-echo "🔧 Setting up environment variables for Shadcn MCP and GitHub MCP..."
+echo "🔧 Setting up environment variables for Shadcn MCP, GitHub MCP, and Railway MCP..."
 
 # Check if .env.local already exists
 if [ -f ".env.local" ]; then
@@ -16,6 +16,10 @@ cat > .env.local << 'EOF'
 # Required scopes: repo (or public_repo), read:org, read:user
 GITHUB_TOKEN=your_github_token_here
 
+# Railway API Token for Railway MCP
+# Get your token from: https://railway.app/account/tokens
+RAILWAY_API_TOKEN=your_railway_token_here
+
 # Supabase Access Token (if needed)
 # Get your token from: https://supabase.com/dashboard/account/tokens
 SUPABASE_ACCESS_TOKEN=your_supabase_token_here
@@ -25,14 +29,19 @@ echo "✅ Created .env.local file"
 echo ""
 echo "📝 Next steps:"
 echo "1. Edit .env.local and replace 'your_github_token_here' with your actual GitHub token"
-echo "2. Edit .env.local and replace 'your_supabase_token_here' with your actual Supabase token"
-echo "3. Get your GitHub token from: https://github.com/settings/tokens"
+echo "2. Edit .env.local and replace 'your_railway_token_here' with your actual Railway token"
+echo "3. Edit .env.local and replace 'your_supabase_token_here' with your actual Supabase token"
+echo "4. Get your GitHub token from: https://github.com/settings/tokens"
 echo "   - Required scopes: repo (or public_repo), read:org, read:user"
-echo "4. Get your Supabase token from: https://supabase.com/dashboard/account/tokens"
+echo "5. Get your Railway token from: https://railway.app/account/tokens"
+echo "6. Get your Supabase token from: https://supabase.com/dashboard/account/tokens"
 echo ""
 echo "🔒 Security note: .env.local is already in .gitignore and won't be committed to Git"
 echo ""
 echo "🚀 Available MCP Servers:"
+echo "   - Railway MCP: Deploy services, manage variables, monitor deployments"
 echo "   - GitHub MCP: Browse repositories, issues, PRs, and code"
 echo "   - Shadcn MCP: Access UI components and demos"
-echo "   - Supabase MCP: Database operations and queries" 
+echo "   - Supabase MCP: Database operations and queries"
+echo ""
+echo "🎯 Railway MCP was installed via Smithery and is ready to use!" 

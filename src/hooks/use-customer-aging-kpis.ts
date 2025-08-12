@@ -328,7 +328,7 @@ export function useCustomerAgingData() {
       try {
         setLoading(true)
         const { data: result, error } = await supabase
-          .from('customer_balance_aging')
+          .from('customer_balance_aging_filtered')
           .select('*')
           .order('total_balance', { ascending: false })
 
@@ -358,7 +358,7 @@ export function useCustomerOwners() {
       try {
         setLoading(true)
         const { data: result, error } = await supabase
-          .from('customer_balance_aging')
+          .from('customer_balance_aging_filtered')
           .select('customer_owner_name_custom')
           .not('customer_owner_name_custom', 'is', null)
 

@@ -33,9 +33,27 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# MCP configuration files (contain sensitive tokens)
+.claude/mcp.json
+.mcp.json
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test artifacts and debugging
+test-*.js
+debug-*.js
+debug-*.sql
+*-monitor-*/
+*-test-*/
+*-debug-*/
+*-fix-*/
+*.log
+*mobile-test*.jpg
+*mobile-*-fixes*.jpg
+*api-ready.jpg
+screenshot-*.js

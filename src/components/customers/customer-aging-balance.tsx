@@ -40,7 +40,7 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
       try {
         setLoading(true)
         const { data, error } = await supabase
-          .from('customer_balance_aging')
+          .from('customer_balance_aging_filtered')
           .select('*')
           .order('total_balance', { ascending: false })
 

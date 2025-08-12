@@ -1,7 +1,7 @@
 # Shadcn MCP Setup Guide
 
 ## Overview
-Your project now has shadcn MCP (Model Context Protocol) and GitHub MCP properly configured. This allows you to interact with shadcn/ui components and GitHub repositories through MCP servers.
+Your project now has shadcn MCP (Model Context Protocol), GitHub MCP, and Railway MCP properly configured. This allows you to interact with shadcn/ui components, GitHub repositories, and Railway.app infrastructure through MCP servers.
 
 ## Configuration Files
 
@@ -9,6 +9,13 @@ Your project now has shadcn MCP (Model Context Protocol) and GitHub MCP properly
 ```json
 {
   "mcpServers": {
+    "railway": {
+      "command": "npx",
+      "args": ["-y", "@jasontanswe/railway-mcp"],
+      "env": {
+        "RAILWAY_API_TOKEN": "${env:RAILWAY_API_TOKEN}"
+      }
+    },
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
@@ -67,6 +74,9 @@ Create a `.env.local` file in your project root with:
 # GitHub Personal Access Token for shadcn MCP and GitHub MCP
 GITHUB_TOKEN=your_actual_github_token_here
 
+# Railway API Token for Railway MCP
+RAILWAY_API_TOKEN=your_actual_railway_token_here
+
 # Supabase Access Token (if needed)
 SUPABASE_ACCESS_TOKEN=your_actual_supabase_token_here
 ```
@@ -78,12 +88,18 @@ Create a `.env.example` file as a template:
 # Get your token from: https://github.com/settings/tokens
 GITHUB_TOKEN=your_github_token_here
 
+# Railway API Token for Railway MCP
+# Get your token from: https://railway.app/account/tokens
+RAILWAY_API_TOKEN=your_railway_token_here
+
 # Supabase Access Token (if needed)
 # Get your token from: https://supabase.com/dashboard/account/tokens
 SUPABASE_ACCESS_TOKEN=your_supabase_token_here
 ```
 
-### 3. GitHub Token Setup
+### 3. Token Setup Instructions
+
+#### GitHub Token:
 1. Go to [GitHub Settings > Tokens](https://github.com/settings/tokens)
 2. Generate a new Personal Access Token (Classic)
 3. Give it a descriptive name like "MCP Servers"
@@ -93,7 +109,39 @@ SUPABASE_ACCESS_TOKEN=your_supabase_token_here
    - `read:user` (for user information)
 5. Copy the token and add it to your `.env.local` file
 
+#### Railway Token:
+1. Go to [Railway Account > Tokens](https://railway.app/account/tokens)
+2. Generate a new API token
+3. Give it a descriptive name like "MCP Server"
+4. Copy the token and add it to your `.env.local` file
+
 ## Available MCP Functions
+
+### Railway MCP Functions:
+- `mcp__railway__configure` - Set Railway API token
+- `mcp__railway__project_list` - List all projects
+- `mcp__railway__project_info` - Get project details
+- `mcp__railway__project_create` - Create new project
+- `mcp__railway__project_delete` - Delete project
+- `mcp__railway__project_environments` - List project environments
+- `mcp__railway__service_list` - List services in project
+- `mcp__railway__service_info` - Get service details
+- `mcp__railway__service_create_from_repo` - Create service from GitHub repo
+- `mcp__railway__service_create_from_image` - Create service from Docker image
+- `mcp__railway__service_delete` - Delete service
+- `mcp__railway__service_restart` - Restart service
+- `mcp__railway__service_update` - Update service configuration
+- `mcp__railway__deployment_list` - List deployments
+- `mcp__railway__deployment_trigger` - Trigger new deployment
+- `mcp__railway__deployment_logs` - Get deployment logs
+- `mcp__railway__deployment_health_check` - Check deployment health
+- `mcp__railway__variable_list` - List environment variables
+- `mcp__railway__variable_set` - Set environment variable
+- `mcp__railway__variable_delete` - Delete environment variable
+- `mcp__railway__variable_bulk_set` - Bulk update variables
+- `mcp__railway__variable_copy` - Copy variables between environments
+- `mcp__railway__database_list_types` - List available database types
+- `mcp__railway__database_deploy` - Deploy new database
 
 ### GitHub MCP Functions:
 - `mcp__github__list_repositories` - List user/organization repositories
@@ -156,6 +204,22 @@ Your project already has a comprehensive shadcn/ui setup with:
 
 ## Usage Examples
 
+### Railway MCP Workflows:
+```bash
+# List all Railway projects
+mcp__railway__project_list
+
+# Create a new service from GitHub repository
+mcp__railway__service_create_from_repo
+
+# Deploy a database
+mcp__railway__database_deploy
+
+# Manage environment variables
+mcp__railway__variable_list
+mcp__railway__variable_set
+```
+
 ### Adding New Components
 ```bash
 npx shadcn@latest add [component-name]
@@ -178,6 +242,32 @@ The shadcn MCP server allows you to:
 ## Permissions
 
 The following permissions are enabled in your `.claude/settings.local.json`:
+
+### Railway MCP Permissions:
+- `mcp__railway__configure`
+- `mcp__railway__project_list`
+- `mcp__railway__project_info`
+- `mcp__railway__project_create`
+- `mcp__railway__project_delete`
+- `mcp__railway__project_environments`
+- `mcp__railway__service_list`
+- `mcp__railway__service_info`
+- `mcp__railway__service_create_from_repo`
+- `mcp__railway__service_create_from_image`
+- `mcp__railway__service_delete`
+- `mcp__railway__service_restart`
+- `mcp__railway__service_update`
+- `mcp__railway__deployment_list`
+- `mcp__railway__deployment_trigger`
+- `mcp__railway__deployment_logs`
+- `mcp__railway__deployment_health_check`
+- `mcp__railway__variable_list`
+- `mcp__railway__variable_set`
+- `mcp__railway__variable_delete`
+- `mcp__railway__variable_bulk_set`
+- `mcp__railway__variable_copy`
+- `mcp__railway__database_list_types`
+- `mcp__railway__database_deploy`
 
 ### GitHub MCP Permissions:
 - `mcp__github__list_repositories`
@@ -224,17 +314,18 @@ The following permissions are enabled in your `.claude/settings.local.json`:
 ## Next Steps
 
 1. **Set up environment variables**: Create `.env.local` with your actual tokens
-2. **Test the MCP servers**: Try using both GitHub and shadcn MCP functions
-3. **Add Components**: Use `npx shadcn@latest add [component]` to add new components
-4. **Explore GitHub**: Use GitHub MCP to browse repositories and code
-5. **Customize**: Modify the `components.json` to adjust styling and configuration
-6. **Update**: Keep the MCP servers and shadcn CLI updated
+2. **Test the MCP servers**: Try using Railway, GitHub, and shadcn MCP functions
+3. **Deploy to Railway**: Use Railway MCP to deploy your dashboard
+4. **Add Components**: Use `npx shadcn@latest add [component]` to add new components
+5. **Explore GitHub**: Use GitHub MCP to browse repositories and code
+6. **Customize**: Modify the `components.json` to adjust styling and configuration
+7. **Update**: Keep the MCP servers and shadcn CLI updated
 
 ## Troubleshooting
 
 If you encounter issues:
-1. Check that the GitHub token is valid and has proper permissions
-2. Ensure the `.env.local` file exists and contains the correct token
+1. Check that all tokens are valid and have proper permissions
+2. Ensure the `.env.local` file exists and contains the correct tokens
 3. Verify the MCP servers are running
 4. Check that all dependencies are installed
 
@@ -244,4 +335,7 @@ If you encounter issues:
 - [MCP Documentation](https://modelcontextprotocol.io/)
 - [Shadcn MCP Server](https://github.com/Jpisnice/shadcn-ui-mcp-server)
 - [GitHub MCP Server](https://github.com/modelcontextprotocol/server-github)
-- [GitHub Personal Access Tokens](https://github.com/settings/tokens) 
+- [Railway MCP Server](https://github.com/jason-tan-swe/railway-mcp)
+- [Smithery Railway MCP](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
+- [GitHub Personal Access Tokens](https://github.com/settings/tokens)
+- [Railway API Tokens](https://railway.app/account/tokens) 

@@ -9,6 +9,29 @@ import { supabase } from './supabase'
 import { formatDateLocal } from './utils'
 
 // =============================================================================
+// ACTIVE BRANCHES API
+// =============================================================================
+
+export async function getActiveBranches(startDate?: Date, endDate?: Date): Promise<string[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_active_branches_for_period', {
+      start_date: startDate ? formatDateLocal(startDate) : null,
+      end_date: endDate ? formatDateLocal(endDate) : null
+    })
+
+    if (error) {
+      console.error('Error fetching active branches:', error)
+      return []
+    }
+
+    return data?.map((row: { branch_name: string }) => row.branch_name) || []
+  } catch (error) {
+    console.error('Error in getActiveBranches:', error)
+    return []
+  }
+}
+
+// =============================================================================
 // TYPES
 // =============================================================================
 
