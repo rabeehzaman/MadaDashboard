@@ -35,8 +35,9 @@ export function useDynamicBranches(dateRange?: DateRange) {
         const { data: branchData, error: fetchError } = await query
 
         if (fetchError) {
-          console.error('Error fetching branches:', fetchError)
-          setError(fetchError.message)
+          console.error('Error fetching branches from expense_details_view:', fetchError)
+          console.error('Full error details:', JSON.stringify(fetchError, null, 2))
+          setError(`Failed to load branches: ${fetchError.message}`)
           return
         }
 

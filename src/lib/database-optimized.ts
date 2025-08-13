@@ -35,7 +35,8 @@ export async function getActiveBranches(startDate?: Date, endDate?: Date): Promi
     const { data, error } = await query
 
     if (error) {
-      console.error('Error fetching active branches:', error)
+      console.error('Error fetching active branches from profit_analysis_view_current:', error)
+      console.error('Full error details:', JSON.stringify(error, null, 2))
       return []
     }
 
