@@ -22,14 +22,22 @@ export function useDynamicBranches(dateRange?: DateRange) {
           .not('branch_name', 'is', null)
 
         // Apply date range filter if provided
-        if (dateRange?.from) {
-          const fromDate = format(dateRange.from, 'yyyy-MM-dd')
-          query = query.gte('date', fromDate)
+        if (dateRange?.from && dateRange.from instanceof Date) {
+          try {
+            const fromDate = format(dateRange.from, 'yyyy-MM-dd')
+            query = query.gte('date', fromDate)
+          } catch (err) {
+            console.error('Error formatting from date:', dateRange.from, err)
+          }
         }
         
-        if (dateRange?.to) {
-          const toDate = format(dateRange.to, 'yyyy-MM-dd')
-          query = query.lte('date', toDate)
+        if (dateRange?.to && dateRange.to instanceof Date) {
+          try {
+            const toDate = format(dateRange.to, 'yyyy-MM-dd')
+            query = query.lte('date', toDate)
+          } catch (err) {
+            console.error('Error formatting to date:', dateRange.to, err)
+          }
         }
 
         const { data: branchData, error: fetchError } = await query
@@ -56,7 +64,7 @@ export function useDynamicBranches(dateRange?: DateRange) {
     }
 
     fetchBranches()
-  }, [dateRange])
+  }, [dateRange?.from, dateRange?.to])
 
   return { branches, loading, error }
 }

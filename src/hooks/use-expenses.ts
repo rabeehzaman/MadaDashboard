@@ -34,29 +34,49 @@ export function useExpenses(selectedBranch: string = "All", dateRange?: DateRang
         }
 
         // Apply date range filter if provided
-        if (dateRange?.from) {
-          const fromDate = format(dateRange.from, 'yyyy-MM-dd')
-          query = query.gte('date', fromDate)
+        if (dateRange?.from && dateRange.from instanceof Date) {
+          try {
+            const fromDate = format(dateRange.from, 'yyyy-MM-dd')
+            query = query.gte('date', fromDate)
+          } catch (err) {
+            console.error('Error formatting from date:', dateRange.from, err)
+          }
         }
         
-        if (dateRange?.to) {
-          const toDate = format(dateRange.to, 'yyyy-MM-dd')
-          query = query.lte('date', toDate)
+        if (dateRange?.to && dateRange.to instanceof Date) {
+          try {
+            const toDate = format(dateRange.to, 'yyyy-MM-dd')
+            query = query.lte('date', toDate)
+          } catch (err) {
+            console.error('Error formatting to date:', dateRange.to, err)
+          }
         }
 
         const { data: expenses, error: fetchError } = await query
 
         if (fetchError) {
-          console.error('Error fetching expenses:', fetchError)
+          console.error('Error fetching expenses from expense_details_view:', fetchError)
+          console.error('Query parameters:', { selectedBranch, dateRange })
+          console.error('Full error details:', JSON.stringify(fetchError, null, 2))
           setError(fetchError.message)
           return
         }
 
         // Convert amount from string to number since Supabase returns numeric as string
-        const processedExpenses = (expenses || []).map(expense => ({
-          ...expense,
-          amount: parseFloat(expense.amount) || 0
-        }))
+        const processedExpenses = (expenses || []).map((expense, index) => {
+          try {
+            return {
+              ...expense,
+              amount: parseFloat(expense.amount) || 0
+            }
+          } catch (err) {
+            console.error(`Error processing expense at index ${index}:`, expense, err)
+            return {
+              ...expense,
+              amount: 0
+            }
+          }
+        })
 
 
         setData(processedExpenses)
@@ -69,7 +89,7 @@ export function useExpenses(selectedBranch: string = "All", dateRange?: DateRang
     }
 
     fetchExpenses()
-  }, [selectedBranch, dateRange])
+  }, [selectedBranch, dateRange?.from, dateRange?.to])
 
   return { data, loading, error }
 }
