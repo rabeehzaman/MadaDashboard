@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useBranches } from "@/hooks/use-branches"
+import { useDynamicBranches } from "@/hooks/use-dynamic-branches"
 import { DateFilter, type DateRange } from "@/components/dashboard/date-filter"
 import { startOfMonth, endOfDay } from "date-fns"
 
@@ -23,7 +23,16 @@ export default function ExpensesPage() {
       to: endOfDay(now) // Month to date
     }
   })
-  const { branches: availableBranches, loading: branchesLoading } = useBranches()
+  const { branches: availableBranches, loading: branchesLoading } = useDynamicBranches(dateRange)
+
+  // Reset selected branch to "All" if it's not available in the filtered branches
+  React.useEffect(() => {
+    if (!branchesLoading && availableBranches.length > 0) {
+      if (!availableBranches.includes(selectedBranch)) {
+        setSelectedBranch("All")
+      }
+    }
+  }, [availableBranches, selectedBranch, branchesLoading])
 
   return (
     <DashboardLayout>
@@ -42,7 +51,7 @@ export default function ExpensesPage() {
           <div>
             <h3 className="font-medium text-sm sm:text-base">Expenses Dashboard Filters</h3>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Filter expenses by branch location and date range (defaults to current month)
+              Filter expenses by branch location and date range. Branch filter shows only branches with transactions in the selected period.
             </p>
           </div>
           

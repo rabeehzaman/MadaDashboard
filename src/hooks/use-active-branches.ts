@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { getActiveBranches } from '@/lib/database-optimized'
 import type { DateRange } from '@/components/dashboard/date-filter'
 
-export function useActiveBranches(dateRange: DateRange) {
+export function useActiveBranches(dateRange?: DateRange) {
   const [branches, setBranches] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,8 +18,8 @@ export function useActiveBranches(dateRange: DateRange) {
         setError(null)
         
         const activeBranches = await getActiveBranches(
-          dateRange.from,
-          dateRange.to
+          dateRange?.from,
+          dateRange?.to
         )
         
         if (mounted) {
@@ -41,7 +41,7 @@ export function useActiveBranches(dateRange: DateRange) {
     return () => {
       mounted = false
     }
-  }, [dateRange.from, dateRange.to])
+  }, [dateRange?.from, dateRange?.to])
 
   return {
     branches,

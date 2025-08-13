@@ -17,7 +17,7 @@ interface BranchFilterProps {
   value?: string
   onValueChange: (value: string | undefined) => void
   className?: string
-  dateRange: DateRange
+  dateRange?: DateRange
 }
 
 export function BranchFilter({ value, onValueChange, className, dateRange }: BranchFilterProps) {

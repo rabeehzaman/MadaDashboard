@@ -27,6 +27,7 @@ export default function FinancialsPage() {
           <BranchFilter 
             value={branchFilter}
             onValueChange={setBranchFilter}
+            dateRange={dateRange}
             className="w-full sm:w-auto min-h-[44px]"
           />
           <DateFilter 

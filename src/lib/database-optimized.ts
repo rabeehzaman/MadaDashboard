@@ -14,17 +14,37 @@ import { formatDateLocal } from './utils'
 
 export async function getActiveBranches(startDate?: Date, endDate?: Date): Promise<string[]> {
   try {
-    const { data, error } = await supabase.rpc('get_active_branches_for_period', {
-      start_date: startDate ? formatDateLocal(startDate) : null,
-      end_date: endDate ? formatDateLocal(endDate) : null
-    })
+    // Use profit_analysis_view_current to get branches with transactions in date range
+    let query = supabase
+      .from('profit_analysis_view_current')
+      .select('Branch Name')
+      .not('Branch Name', 'is', null)
+      .neq('Branch Name', 'SEB VEHICLE')
+
+    // Apply date range filter if provided
+    if (startDate) {
+      const fromDate = formatDateLocal(startDate)
+      query = query.gte('Inv Date', fromDate)
+    }
+    
+    if (endDate) {
+      const toDate = formatDateLocal(endDate)
+      query = query.lte('Inv Date', toDate)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       console.error('Error fetching active branches:', error)
       return []
     }
 
-    return data?.map((row: { branch_name: string }) => row.branch_name) || []
+    // Get unique branch names and sort them
+    const uniqueBranches = Array.from(
+      new Set(data?.map(item => item['Branch Name']) || [])
+    ).sort()
+
+    return uniqueBranches
   } catch (error) {
     console.error('Error in getActiveBranches:', error)
     return []
