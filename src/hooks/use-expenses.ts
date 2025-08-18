@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import type { DateRange } from "@/components/dashboard/date-filter"
+import type { BranchFilterValue } from "@/components/dashboard/branch-filter"
 import { format } from "date-fns"
 
 export interface ExpenseRecord {
@@ -12,7 +13,7 @@ export interface ExpenseRecord {
   branch_name: string
 }
 
-export function useExpenses(selectedBranch: string = "All", dateRange?: DateRange) {
+export function useExpenses(branchFilter: BranchFilterValue = undefined, dateRange?: DateRange) {
   const [data, setData] = useState<ExpenseRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -28,9 +29,9 @@ export function useExpenses(selectedBranch: string = "All", dateRange?: DateRang
           .select('*')
           .order('date', { ascending: false })
 
-        // Apply branch filter if not "All"
-        if (selectedBranch !== "All") {
-          query = query.eq('branch_name', selectedBranch)
+        // Apply branch filter if provided
+        if (branchFilter) {
+          query = query.eq('branch_name', branchFilter)
         }
 
         // Apply date range filter if provided
@@ -56,7 +57,7 @@ export function useExpenses(selectedBranch: string = "All", dateRange?: DateRang
 
         if (fetchError) {
           console.error('Error fetching expenses from expense_details_view:', fetchError)
-          console.error('Query parameters:', { selectedBranch, dateRange })
+          console.error('Query parameters:', { branchFilter, dateRange })
           console.error('Full error details:', JSON.stringify(fetchError, null, 2))
           setError(fetchError.message)
           return
@@ -89,7 +90,7 @@ export function useExpenses(selectedBranch: string = "All", dateRange?: DateRang
     }
 
     fetchExpenses()
-  }, [selectedBranch, dateRange?.from, dateRange?.to])
+  }, [branchFilter, dateRange?.from?.getTime(), dateRange?.to?.getTime()])
 
   return { data, loading, error }
 }

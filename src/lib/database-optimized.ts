@@ -14,22 +14,25 @@ import { formatDateLocal } from './utils'
 
 export async function getActiveBranches(startDate?: Date, endDate?: Date): Promise<string[]> {
   try {
+    console.log('🔍 DEBUG: Building getActiveBranches query...')
     // Use profit_analysis_view_current to get branches with transactions in date range
     let query = supabase
       .from('profit_analysis_view_current')
-      .select('Branch Name')
-      .not('Branch Name', 'is', null)
-      .neq('Branch Name', 'SEB VEHICLE')
+      .select('"Branch Name"')
+      .not('"Branch Name"', 'is', null)
+      .neq('"Branch Name"', 'SEB VEHICLE')
+    
+    console.log('🔍 DEBUG: Initial query built, column selected: "Branch Name"')
 
     // Apply date range filter if provided
     if (startDate) {
       const fromDate = formatDateLocal(startDate)
-      query = query.gte('Inv Date', fromDate)
+      query = query.gte('"Inv Date"', fromDate)
     }
     
     if (endDate) {
       const toDate = formatDateLocal(endDate)
-      query = query.lte('Inv Date', toDate)
+      query = query.lte('"Inv Date"', toDate)
     }
 
     const { data, error } = await query

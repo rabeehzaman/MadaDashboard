@@ -17,14 +17,15 @@ import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/formatting"
 import { format } from "date-fns"
 import type { DateRange } from "@/components/dashboard/date-filter"
+import type { BranchFilterValue } from "@/components/dashboard/branch-filter"
 
 interface ExpensesTableProps {
-  selectedBranch: string
+  branchFilter: BranchFilterValue
   dateRange: DateRange
 }
 
-export function ExpensesTable({ selectedBranch, dateRange }: ExpensesTableProps) {
-  const { data: expenses, loading, error } = useExpenses(selectedBranch, dateRange)
+export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
+  const { data: expenses, loading, error } = useExpenses(branchFilter, dateRange)
   const [searchTerm, setSearchTerm] = React.useState("")
 
   // Filter expenses based on search term
@@ -39,7 +40,10 @@ export function ExpensesTable({ selectedBranch, dateRange }: ExpensesTableProps)
 
   // Calculate total amount
   const totalAmount = React.useMemo(() => {
-    return filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0)
+    return filteredExpenses.reduce((sum, expense) => {
+      const amount = typeof expense.amount === 'string' ? parseFloat(expense.amount) || 0 : expense.amount
+      return sum + amount
+    }, 0)
   }, [filteredExpenses])
 
   if (loading) {
@@ -79,7 +83,7 @@ export function ExpensesTable({ selectedBranch, dateRange }: ExpensesTableProps)
         <CardTitle>Expenses</CardTitle>
         <CardDescription>
           {filteredExpenses.length} of {expenses?.length || 0} expenses
-          {selectedBranch !== "All" && ` • Filtered by: ${selectedBranch}`}
+          {branchFilter && ` • Filtered by: ${branchFilter}`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -115,7 +119,7 @@ export function ExpensesTable({ selectedBranch, dateRange }: ExpensesTableProps)
                   {formatCurrency(totalAmount)}
                 </TableCell>
                 <TableCell className="font-bold">
-                  {selectedBranch !== "All" ? selectedBranch : "All Branches"}
+                  {branchFilter ? branchFilter : "All Branches"}
                 </TableCell>
               </TableRow>
               
@@ -134,7 +138,7 @@ export function ExpensesTable({ selectedBranch, dateRange }: ExpensesTableProps)
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {formatCurrency(expense.amount)}
+                    {formatCurrency(typeof expense.amount === 'string' ? parseFloat(expense.amount) || 0 : expense.amount)}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="whitespace-nowrap">

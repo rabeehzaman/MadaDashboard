@@ -64,7 +64,7 @@ export function useDynamicBranches(dateRange?: DateRange) {
     }
 
     fetchBranches()
-  }, [dateRange?.from, dateRange?.to])
+  }, [dateRange?.from?.getTime(), dateRange?.to?.getTime()])
 
   return { branches, loading, error }
 }

@@ -3,19 +3,11 @@
 import * as React from "react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { ExpensesTable } from "@/components/expenses/expenses-table"
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { useDynamicBranches } from "@/hooks/use-dynamic-branches"
 import { DateFilter, type DateRange } from "@/components/dashboard/date-filter"
+import { BranchFilter, type BranchFilterValue } from "@/components/dashboard/branch-filter"
 import { startOfMonth, endOfDay } from "date-fns"
 
 export default function ExpensesPage() {
-  const [selectedBranch, setSelectedBranch] = React.useState<string>("All")
   const [dateRange, setDateRange] = React.useState<DateRange>(() => {
     const now = new Date()
     return {
@@ -23,70 +15,36 @@ export default function ExpensesPage() {
       to: endOfDay(now) // Month to date
     }
   })
-  const { branches: availableBranches, loading: branchesLoading } = useDynamicBranches(dateRange)
-
-  // Reset selected branch to "All" if it's not available in the filtered branches
-  React.useEffect(() => {
-    if (!branchesLoading && availableBranches.length > 0) {
-      if (!availableBranches.includes(selectedBranch)) {
-        setSelectedBranch("All")
-      }
-    }
-  }, [availableBranches, selectedBranch, branchesLoading])
+  const [branchFilter, setBranchFilter] = React.useState<BranchFilterValue>(undefined)
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-4 mb-6">
+      {/* Filters */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full max-w-full overflow-x-hidden">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Expenses Dashboard</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Expenses Dashboard</h2>
           <p className="text-sm sm:text-base text-muted-foreground">
             Monitor and analyze all business expenses across branches
           </p>
         </div>
-      </div>
-      
-      {/* Master Branch Filter */}
-      {!branchesLoading && (
-        <div className="flex flex-col gap-4 mb-6 p-3 sm:p-4 bg-muted/30 rounded-lg">
-          <div>
-            <h3 className="font-medium text-sm sm:text-base">Expenses Dashboard Filters</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Filter expenses by branch location and date range. Branch filter shows only branches with transactions in the selected period.
-            </p>
-          </div>
-          
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
-            <div className="flex flex-col gap-2">
-              <span className="text-xs sm:text-sm text-muted-foreground font-medium">Branch:</span>
-              <Select value={selectedBranch} onValueChange={setSelectedBranch}>
-                <SelectTrigger className="w-full sm:w-[250px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableBranches.map((branch) => (
-                    <SelectItem key={branch} value={branch}>
-                      {branch}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              <span className="text-xs sm:text-sm text-muted-foreground font-medium">Date Range:</span>
-              <DateFilter 
-                onDateRangeChange={setDateRange}
-                className="w-full sm:w-auto"
-              />
-            </div>
-          </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 w-full sm:w-auto max-w-full overflow-x-hidden">
+          <BranchFilter 
+            value={branchFilter}
+            onValueChange={setBranchFilter}
+            className="w-full sm:w-auto min-h-[44px]"
+            dateRange={dateRange}
+          />
+          <DateFilter 
+            onDateRangeChange={setDateRange}
+            className="w-full sm:w-auto min-h-[44px]"
+          />
         </div>
-      )}
+      </div>
       
       {/* Expenses Table */}
       <div>
         <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">All Expenses</h3>
-        <ExpensesTable selectedBranch={selectedBranch} dateRange={dateRange} />
+        <ExpensesTable branchFilter={branchFilter} dateRange={dateRange} />
       </div>
     </DashboardLayout>
   )
