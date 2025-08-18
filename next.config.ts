@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Production optimizations
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
 };
 
 export default withPWA({
