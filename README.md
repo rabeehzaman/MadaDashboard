@@ -20,7 +20,7 @@ A comprehensive dashboard for profit analysis and business insights built with N
 - **Charts**: Recharts
 - **Styling**: Tailwind CSS
 - **TypeScript**: Full type safety
-- **Deployment**: Vercel
+- **Deployment**: Railway (Production optimized)
 
 ## Getting Started
 
