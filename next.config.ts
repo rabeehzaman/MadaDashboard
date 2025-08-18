@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  // Disable development indicators in production
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Disable telemetry and dev indicators
+  telemetry: {
+    enabled: false,
+  },
 };
 
 export default withPWA({
