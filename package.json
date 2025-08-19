@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 3010",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -34,6 +34,7 @@
     "react-hook-form": "^7.61.1",
     "recharts": "^3.1.0",
     "rtl-detect": "^1.1.2",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^4.0.10"
   },
   "devDependencies": {

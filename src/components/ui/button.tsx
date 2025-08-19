@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { cssAnimations, getReducedMotionClasses } from "@/lib/css-animations"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -35,24 +36,66 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps extends React.ComponentProps<"button">,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  loading?: boolean
+  disableAnimations?: boolean
+}
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  loading = false,
+  disableAnimations = false,
+  children,
+  disabled,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+}: ButtonProps) {
+  const isDisabled = disabled || loading
+  
+  const animationClasses = !disableAnimations
+    ? getReducedMotionClasses(`${cssAnimations.hoverScale} ${cssAnimations.activeScale}`, '')
+    : ''
+
+  if (asChild) {
+    return (
+      <Slot
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }), animationClasses)}
+        {...props}
+      >
+        {children}
+      </Slot>
+    )
+  }
 
   return (
-    <Comp
+    <button
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        animationClasses,
+        loading && "relative"
+      )}
+      disabled={isDisabled}
       {...props}
-    />
+    >
+      {loading && (
+        <div
+          className={cn(
+            "mr-2 h-4 w-4 rounded-full border-2 border-current border-t-transparent",
+            cssAnimations.spin,
+            cssAnimations.fadeIn
+          )}
+        />
+      )}
+      <span className={loading ? "opacity-70" : "opacity-100"}>
+        {children}
+      </span>
+    </button>
   )
 }
 

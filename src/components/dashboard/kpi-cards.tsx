@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, DollarSign, Percent, ShoppingCart, Receipt, P
 import { useOptimizedKPIs } from "@/hooks/use-optimized-data"
 import { formatCurrency, formatNumber } from "@/lib/formatting"
 import { useLocale } from "@/i18n/locale-provider"
+import { cssAnimations, createStaggeredClasses } from "@/lib/css-animations"
 import type { DateRange } from "@/components/dashboard/date-filter"
 
 interface KPICardProps {
@@ -16,12 +17,13 @@ interface KPICardProps {
   description?: string
   icon?: React.ReactNode
   loading?: boolean
+  delay?: number
 }
 
-function KPICard({ title, value, change, description, icon, loading }: KPICardProps) {
+function KPICard({ title, value, change, description, icon, loading, delay = 0 }: KPICardProps) {
   if (loading) {
     return (
-      <Card>
+      <Card animated={false}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-4 rounded" />
@@ -38,7 +40,7 @@ function KPICard({ title, value, change, description, icon, loading }: KPICardPr
   const isNegative = change && change < 0
 
   return (
-    <Card>
+    <Card hoverable={true} delay={delay}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm sm:text-base font-semibold">{title}</CardTitle>
         {icon && <div className="text-muted-foreground">{icon}</div>}
@@ -140,24 +142,28 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
           value={formatCurrency(kpis?.total_revenue || 0)}
           icon={<DollarSign className="h-4 w-4" />}
           loading={loading}
+          delay={0}
         />
         <KPICard
           title={t("kpi.taxable_sales")}
           value={formatCurrency(kpis?.total_taxable_sales || 0)}
           icon={<Receipt className="h-4 w-4" />}
           loading={loading}
+          delay={100}
         />
         <KPICard
           title={t("kpi.net_profit")}
           value={formatCurrency(kpis?.total_profit || 0)}
           icon={<TrendingUp className="h-4 w-4" />}
           loading={loading}
+          delay={200}
         />
         <KPICard
           title={t("kpi.profit_margin")}
           value={`${(kpis?.profit_margin_percent || 0).toFixed(1)}%`}
           icon={<Percent className="h-4 w-4" />}
           loading={loading}
+          delay={300}
         />
       </div>
     </div>

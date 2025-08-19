@@ -94,7 +94,6 @@ export default async function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
           >
             <DynamicThemeColor />
             {children}

@@ -1,13 +1,37 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { cssAnimations, getReducedMotionClasses } from "@/lib/css-animations"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+interface CardProps extends React.ComponentProps<"div"> {
+  animated?: boolean
+  hoverable?: boolean
+  delay?: number
+}
+
+function Card({ 
+  className, 
+  animated = true, 
+  hoverable = true, 
+  delay = 0, 
+  ...props 
+}: CardProps) {
+  const animationClasses = animated 
+    ? getReducedMotionClasses(
+        `${cssAnimations.fadeInUp} ${delay > 0 ? `delay-[${delay}ms]` : ''}`,
+        ''
+      )
+    : ''
+  
+  const hoverClasses = hoverable ? cssAnimations.hoverLift : ''
+
   return (
     <div
       data-slot="card"
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        animationClasses,
+        hoverClasses,
         className
       )}
       {...props}

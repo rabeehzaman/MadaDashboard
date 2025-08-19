@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Home, Users, TrendingUp, Building2, Receipt, Calculator } from "lucide-react"
 import { useLocale } from "@/i18n/locale-provider"
 import { SimpleLanguageSwitcher } from "@/components/language-switcher"
+import { cssAnimations, createStaggeredClasses } from "@/lib/css-animations"
 
 import {
   Sidebar,
@@ -82,18 +83,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupLabel className={isArabic ? 'text-right' : ''}>{section.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="sidebar-menu">
-                {section.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <a href={item.url} className={`nav-item ${isArabic ? 'text-right' : ''}`}>
-                        <div className={`flex items-center gap-2 w-full ${isArabic ? 'flex-row-reverse' : ''}`}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </div>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {section.items.map((item, index) => {
+                  const isActive = pathname === item.url
+                  const staggerDelay = index * 100
+                  
+                  return (
+                    <SidebarMenuItem 
+                      key={item.title}
+                      className={`motion-safe:${cssAnimations.fadeInLeft} motion-safe:delay-[${staggerDelay}ms]`}
+                    >
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <a 
+                          href={item.url} 
+                          className={`nav-item ${isArabic ? 'text-right' : ''} relative block ${cssAnimations.hoverScale} transition-all duration-200`}
+                        >
+                          {isActive && (
+                            <div className="absolute inset-0 bg-primary/10 rounded-md" />
+                          )}
+                          <div className={`flex items-center gap-2 w-full relative z-10 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                            <div className="transition-transform duration-200 hover:rotate-3">
+                              <item.icon />
+                            </div>
+                            <span>{item.title}</span>
+                          </div>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
