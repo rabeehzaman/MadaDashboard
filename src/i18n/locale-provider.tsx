@@ -40,21 +40,17 @@ export function LocaleProvider({ children, initialLocale }: LocaleProviderProps)
   }
 
   const switchLanguage = () => {
-    const currentHostname = window.location.hostname
-    const currentPath = window.location.pathname
-    const currentSearch = window.location.search
+    const currentUrl = new URL(window.location.href)
+    const newLocale = initialLocale === 'en' ? 'ar' : 'en'
     
-    if (initialLocale === 'en') {
-      // Switch to Arabic
-      const newHostname = currentHostname.startsWith('www.') 
-        ? currentHostname.replace('www.', 'ar.')
-        : `ar.${currentHostname}`
-      window.location.href = `${window.location.protocol}//${newHostname}${currentPath}${currentSearch}`
-    } else {
-      // Switch to English
-      const newHostname = currentHostname.replace('ar.', '')
-      window.location.href = `${window.location.protocol}//${newHostname}${currentPath}${currentSearch}`
-    }
+    // Set the language query parameter
+    currentUrl.searchParams.set('lang', newLocale)
+    
+    // Store preference in cookie
+    document.cookie = `preferred-language=${newLocale}; path=/; max-age=${365 * 24 * 60 * 60}; secure; samesite=lax`
+    
+    // Navigate to the new URL
+    window.location.href = currentUrl.toString()
   }
 
   return (

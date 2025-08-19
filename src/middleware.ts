@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get('host') || ''
+  const url = request.nextUrl.clone()
   
-  // Check if the subdomain is Arabic
-  const isArabic = hostname.startsWith('ar.')
+  // Check for language query parameter first
+  const langParam = url.searchParams.get('lang')
   
-  // Set locale based on subdomain
-  const locale = isArabic ? 'ar' : 'en'
+  // Check for language preference in cookies
+  const langCookie = request.cookies.get('preferred-language')?.value
+  
+  // Determine locale: query param > cookie > default (en)
+  let locale = 'en'
+  if (langParam === 'ar' || langParam === 'en') {
+    locale = langParam
+  } else if (langCookie === 'ar' || langCookie === 'en') {
+    locale = langCookie
+  }
+  
+  const isArabic = locale === 'ar'
   
   // Clone the request headers and add locale information
   const requestHeaders = new Headers(request.headers)
@@ -24,6 +34,16 @@ export function middleware(request: NextRequest) {
   // Set locale in response headers for client-side access
   response.headers.set('x-locale', locale)
   response.headers.set('x-is-arabic', isArabic.toString())
+  
+  // If language was set via query parameter, store it in a cookie
+  if (langParam && (langParam === 'ar' || langParam === 'en')) {
+    response.cookies.set('preferred-language', langParam, {
+      maxAge: 365 * 24 * 60 * 60, // 1 year
+      path: '/',
+      secure: true,
+      sameSite: 'lax'
+    })
+  }
   
   return response
 }
