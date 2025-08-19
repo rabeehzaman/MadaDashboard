@@ -16,10 +16,7 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Disable telemetry and dev indicators
-  telemetry: {
-    enabled: false,
-  },
+  // Disable telemetry (handled by environment variable NEXT_TELEMETRY_DISABLED=1)
 };
 
 export default withPWA({
