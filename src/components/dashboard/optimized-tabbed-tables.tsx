@@ -19,6 +19,7 @@ import {
 } from "@/hooks/use-optimized-data"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { formatCurrencyTable, formatNumber, formatDateSA } from "@/lib/formatting"
+import { useLocale } from "@/i18n/locale-provider"
 import type { DateRange } from "./date-filter"
 
 interface OptimizedTabbedTablesProps {
@@ -27,6 +28,8 @@ interface OptimizedTabbedTablesProps {
 }
 
 export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabbedTablesProps) {
+  const { t } = useLocale()
+  
   // Dual state management for immediate UI vs deferred content rendering
   const [activeTab, setActiveTab] = React.useState("items")        // Immediate visual feedback
   const [contentTab, setContentTab] = React.useState("items")      // Deferred content rendering
@@ -179,12 +182,12 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Optimized Analysis Tables</CardTitle>
+        <CardTitle>{t("tables.title")}</CardTitle>
         <CardDescription>
-          Database-optimized views with perfect KPI consistency
+          {t("tables.description")}
           <div className="flex items-center gap-2 mt-2 text-xs">
             <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span>Using optimized RPC functions and database views</span>
+            <span>{t("messages.using_rpc")}</span>
           </div>
         </CardDescription>
       </CardHeader>
@@ -193,23 +196,23 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
           <TabsList className="grid w-full grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 gap-1 min-h-[44px] h-auto">
             <TabsTrigger value="items" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Package className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Profit by Item</span>
-              <span className="sm:hidden">Items</span>
+              <span className="hidden sm:inline">{t("tables.tabs.profit_by_item")}</span>
+              <span className="sm:hidden">{t("tables.tabs.items_short")}</span>
             </TabsTrigger>
             <TabsTrigger value="customers" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Profit by Customer</span>
-              <span className="sm:hidden">Customers</span>
+              <span className="hidden sm:inline">{t("tables.tabs.profit_by_customer")}</span>
+              <span className="sm:hidden">{t("tables.tabs.customers")}</span>
             </TabsTrigger>
             <TabsTrigger value="invoices" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Profit by Invoice</span>
-              <span className="sm:hidden">Invoices</span>
+              <span className="hidden sm:inline">{t("tables.tabs.profit_by_invoice")}</span>
+              <span className="sm:hidden">{t("tables.tabs.invoices")}</span>
             </TabsTrigger>
             <TabsTrigger value="stock" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Warehouse className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Stock Report</span>
-              <span className="sm:hidden">Stock</span>
+              <span className="hidden sm:inline">{t("tables.tabs.stock_report")}</span>
+              <span className="sm:hidden">{t("tables.tabs.stock")}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -218,30 +221,30 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="flex items-center justify-center h-32">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Switching to Items...</span>
+                  <span>{t("common.loading")}</span>
                 </div>
               </div>
             ) : itemLoading ? (
-              <TabLoadingState message="Loading items data from optimized database views..." />
+              <TabLoadingState message={t("common.loading")} />
             ) : (
               <>
                 <div className="flex flex-col space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-muted-foreground">
-                      Showing {displayItemData.length} {showAllItems ? 'of all' : `of first ${itemsPerPage}`} items
-                      <span className="text-green-600 ml-2">• 2025 data only for optimal performance</span>
+                      {t("actions.show_all")} {displayItemData.length} {showAllItems ? t("common.total") : `${itemsPerPage}`} {t("kpi.items")}
+                      <span className="text-green-600 ml-2">• {t("tables.performance_note")}</span>
                     </div>
                   </div>
               
               <div className="flex flex-col lg:flex-row lg:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filters:</span>
+                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("common.filter")}:</span>
                 <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
                   <SearchableSelect
                     options={itemFilterOptions}
                     value={itemFilter}
                     onValueChange={setItemFilter}
-                    placeholder="Filter by item..."
-                    searchPlaceholder="Search items..."
+                    placeholder={t("filters.filter_by_item")}
+                    searchPlaceholder={t("filters.search_items")}
                     className="w-full sm:w-[200px] sm:max-w-[200px] min-w-0 min-h-[44px]"
                     loading={itemFilterOptionsLoading}
                   />
@@ -249,8 +252,8 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                     options={customerFilterOptions}
                     value={itemCustomerFilter}
                     onValueChange={setItemCustomerFilter}
-                    placeholder="Filter by customer..."
-                    searchPlaceholder="Search customers..."
+                    placeholder={t("filters.filter_by_customer")}
+                    searchPlaceholder={t("filters.search_customers")}
                     className="w-full sm:w-[200px] sm:max-w-[200px] min-w-0 min-h-[44px]"
                     loading={customerFilterOptionsLoading}
                   />
@@ -258,8 +261,8 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                     options={invoiceFilterOptions}
                     value={itemInvoiceFilter}
                     onValueChange={setItemInvoiceFilter}
-                    placeholder="Filter by invoice..."
-                    searchPlaceholder="Search invoices..."
+                    placeholder={t("filters.filter_by_invoice")}
+                    searchPlaceholder={t("filters.search_invoices")}
                     className="w-full sm:w-[180px] sm:max-w-[180px] min-w-0 min-h-[44px]"
                     loading={invoiceFilterOptionsLoading}
                   />
@@ -275,7 +278,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                     }}
                     className="whitespace-nowrap min-h-[44px]"
                   >
-                    Clear All
+                    {t("tables.clear_all")}
                   </Button>
                 )}
               </div>
@@ -293,20 +296,20 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                         </Badge>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                        <div>Date: {formatDateSA(item.inv_date)}</div>
-                        <div>Invoice: {item.inv_no}</div>
+                        <div>{t("tables.headers.date")}: {formatDateSA(item.inv_date)}</div>
+                        <div>{t("tables.headers.invoice_number")}: {item.inv_no}</div>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
-                          <span className="text-muted-foreground">Price:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.unit_price")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(item.unit_price || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Cost:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.unit_cost")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(item.unit_cost || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Unit Profit:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.unit_profit")}:</span><br/>
                           <Badge variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"} className="text-xs">
                             {formatCurrencyTable(item.unit_profit || 0)}
                           </Badge>
@@ -322,13 +325,13 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Table className="min-w-[600px]">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Invoice #</TableHead>
-                      <TableHead>Item</TableHead>
-                      <TableHead className="text-right">U.Price</TableHead>
-                      <TableHead className="text-right">U.Cost</TableHead>
-                      <TableHead className="text-right">Unit Profit</TableHead>
-                      <TableHead className="text-right">Profit %</TableHead>
+                      <TableHead>{t("tables.headers.date")}</TableHead>
+                      <TableHead>{t("tables.headers.invoice_number")}</TableHead>
+                      <TableHead>{t("tables.headers.item")}</TableHead>
+                      <TableHead className="text-right">{t("tables.headers.unit_price")}</TableHead>
+                      <TableHead className="text-right">{t("tables.headers.unit_cost")}</TableHead>
+                      <TableHead className="text-right">{t("tables.headers.unit_profit")}</TableHead>
+                      <TableHead className="text-right">{t("tables.headers.profit_percentage")}</TableHead>
                     </TableRow>
                   </TableHeader>
                 <TableBody>
@@ -363,7 +366,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   className="flex items-center gap-2 min-h-[44px]"
                 >
                   <ChevronDown className="h-4 w-4" />
-                  Show All ({itemData.length} items)
+                  {t("actions.show_all")} ({itemData.length} {t("kpi.items")})
                 </Button>
               </div>
             )}
@@ -376,29 +379,29 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="flex items-center justify-center h-32">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Switching to Customers...</span>
+                  <span>{t("common.loading")}</span>
                 </div>
               </div>
             ) : customerLoading ? (
-              <TabLoadingState message="Loading customers data from optimized database views..." />
+              <TabLoadingState message={t("common.loading")} />
             ) : (
               <>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Showing {displayCustomerData.length} customers
-                    <span className="text-green-600 ml-2">• 2025 data only for optimal performance</span>
+                    {t("actions.show_all")} {displayCustomerData.length} {t("nav.customers")}
+                    <span className="text-green-600 ml-2">• {t("tables.performance_note")}</span>
                   </div>
                 </div>
             
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filter:</span>
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("common.filter")}:</span>
               <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
                 <SearchableSelect
                   options={customerFilterOptions}
                   value={customerOnlyFilter}
                   onValueChange={setCustomerOnlyFilter}
-                  placeholder="Filter by customer..."
-                  searchPlaceholder="Search customers..."
+                  placeholder={t("tables.filter_placeholders.customer")}
+                  searchPlaceholder={t("tables.filter_placeholders.customer_search")}
                   className="w-full sm:w-[300px] sm:max-w-[300px] min-w-0 min-h-[44px]"
                   loading={customerFilterOptionsLoading}
                 />
@@ -410,7 +413,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   onClick={() => setCustomerOnlyFilter(undefined)}
                   className="whitespace-nowrap"
                 >
-                  Clear Filter
+                  {t("common.cancel")}
                 </Button>
               )}
             </div>
@@ -419,7 +422,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="md:hidden">
                 <div className="p-3 bg-muted/50 border-b">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total:</span>
+                    <span className="font-semibold">{t("tables.headers.total")}</span>
                     <Badge variant={customerTotal >= 0 ? "default" : "destructive"} className="text-sm">
                       {formatCurrencyTable(customerTotal)}
                     </Badge>
@@ -442,11 +445,11 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Customer Name</TableHead>
-                    <TableHead className="text-right">Profit</TableHead>
+                    <TableHead>{t("tables.headers.customer_name")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.profit")}</TableHead>
                   </TableRow>
                   <TableRow>
-                    <TableHead className="bg-muted font-semibold">Total:</TableHead>
+                    <TableHead className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
                     <TableHead className="bg-muted font-semibold text-right">
                       {formatCurrencyTable(customerTotal)}
                     </TableHead>
@@ -476,29 +479,29 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="flex items-center justify-center h-32">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Switching to Invoices...</span>
+                  <span>{t("common.loading")}</span>
                 </div>
               </div>
             ) : invoiceLoading ? (
-              <TabLoadingState message="Loading invoices data from optimized database views..." />
+              <TabLoadingState message={t("common.loading")} />
             ) : (
               <>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Showing {displayInvoiceData.length} {showAllInvoices ? 'of all' : `of first ${itemsPerPage}`} invoices
-                    <span className="text-green-600 ml-2">• 2025 data only for optimal performance</span>
+                    {t("actions.show_all")} {displayInvoiceData.length} {showAllInvoices ? t("common.total") : `${itemsPerPage}`} {t("kpi.invoices")}
+                    <span className="text-green-600 ml-2">• {t("tables.performance_note")}</span>
                   </div>
                 </div>
             
             <div className="flex flex-col lg:flex-row lg:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filters:</span>
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("tables.filters_label")}</span>
               <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
                 <SearchableSelect
                   options={customerFilterOptions}
                   value={invoiceCustomerFilter}
                   onValueChange={setInvoiceCustomerFilter}
-                  placeholder="Filter by customer..."
-                  searchPlaceholder="Search customers..."
+                  placeholder={t("tables.filter_placeholders.customer")}
+                  searchPlaceholder={t("tables.filter_placeholders.customer_search")}
                   className="w-full sm:w-[250px] sm:max-w-[250px] min-w-0 min-h-[44px]"
                   loading={customerFilterOptionsLoading}
                 />
@@ -506,8 +509,8 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   options={invoiceFilterOptions}
                   value={invoiceNumberFilter}
                   onValueChange={setInvoiceNumberFilter}
-                  placeholder="Filter by invoice..."
-                  searchPlaceholder="Search invoices..."
+                  placeholder={t("tables.filter_placeholders.invoice")}
+                  searchPlaceholder={t("tables.filter_placeholders.invoice_search")}
                   className="w-full sm:w-[200px] sm:max-w-[200px] min-w-0 min-h-[44px]"
                   loading={invoiceFilterOptionsLoading}
                 />
@@ -530,24 +533,24 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               {/* Mobile View */}
               <div className="md:hidden">
                 <div className="p-3 bg-muted/50 border-b space-y-2">
-                  <div className="font-semibold text-sm">Totals:</div>
+                  <div className="font-semibold text-sm">{t("common.total")}:</div>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
-                      <div className="text-muted-foreground">Sale Price:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.sale_price")}:</div>
                       <div className="font-medium">{formatCurrencyTable(invoiceTotal.salePrice)}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Cost:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.cost")}:</div>
                       <div className="font-medium">{formatCurrencyTable(invoiceTotal.cost)}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Profit:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.profit")}:</div>
                       <Badge variant={invoiceTotal.profit >= 0 ? "default" : "destructive"} className="text-xs">
                         {formatCurrencyTable(invoiceTotal.profit)}
                       </Badge>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Profit %:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.profit_percentage")}:</div>
                       <Badge variant={invoiceTotal.profit >= 0 ? "default" : "destructive"} className="text-xs">
                         {invoiceTotal.salePrice > 0 ? ((invoiceTotal.profit / invoiceTotal.salePrice) * 100).toFixed(1) : 0}%
                       </Badge>
@@ -564,19 +567,19 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                         </Badge>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Date: {formatDateSA(invoice.inv_date)}
+                        {t("tables.headers.date")}: {formatDateSA(invoice.inv_date)}
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
-                          <span className="text-muted-foreground">Sale:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.sale_price")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(invoice.total_sale_price || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Cost:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.cost")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(invoice.total_cost || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Unit Profit:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.profit")}:</span><br/>
                           <Badge variant={(invoice.total_profit || 0) >= 0 ? "default" : "destructive"} className="text-xs">
                             {formatCurrencyTable(invoice.total_profit || 0)}
                           </Badge>
@@ -592,15 +595,15 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Invoice #</TableHead>
-                    <TableHead className="text-right">Sale Price</TableHead>
-                    <TableHead className="text-right">Cost</TableHead>
-                    <TableHead className="text-right">Profit</TableHead>
-                    <TableHead className="text-right">Profit %</TableHead>
+                    <TableHead>{t("tables.headers.date")}</TableHead>
+                    <TableHead>{t("tables.headers.invoice_number")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.sale_price")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.cost")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.profit")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.profit_percentage")}</TableHead>
                   </TableRow>
                   <TableRow>
-                    <TableHead colSpan={2} className="bg-muted font-semibold">Total:</TableHead>
+                    <TableHead colSpan={2} className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
                     <TableHead className="bg-muted font-semibold text-right">
                       {formatCurrencyTable(invoiceTotal.salePrice)}
                     </TableHead>
@@ -646,7 +649,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   className="flex items-center gap-2 min-h-[44px]"
                 >
                   <ChevronDown className="h-4 w-4" />
-                  Show All ({invoiceData.length} invoices)
+                  {t("actions.show_all")} ({invoiceData.length} {t("kpi.invoices")})
                 </Button>
               </div>
             )}
@@ -659,30 +662,30 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="flex items-center justify-center h-32">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Switching to Stock...</span>
+                  <span>{t("common.loading")}</span>
                 </div>
               </div>
             ) : stockLoading ? (
-              <TabLoadingState message="Loading stock data from optimized database views..." />
+              <TabLoadingState message={t("common.loading")} />
             ) : (
               <>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Showing {displayStockData.length} products
-                    <span className="text-green-600 ml-2">• Total reflects filtered data</span>
-                    <span className="text-blue-600 ml-2">• KPI shows all warehouses</span>
+                    {t("actions.show_all")} {displayStockData.length} {t("tables.products_label")}
+                    <span className="text-green-600 ml-2">• {t("tables.total_reflects_note")}</span>
+                    <span className="text-blue-600 ml-2">• {t("tables.kpi_shows_note")}</span>
                   </div>
                 </div>
             
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filter:</span>
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("common.filter")}:</span>
               <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
                 <SearchableSelect
                   options={warehouseFilterOptions}
                   value={warehouseFilter}
                   onValueChange={setWarehouseFilter}
-                  placeholder="Filter by warehouse..."
-                  searchPlaceholder="Search warehouses..."
+                  placeholder={t("filters.filter_by_warehouse")}
+                  searchPlaceholder={t("filters.search_warehouses")}
                   className="w-full sm:w-[250px] sm:max-w-[250px] min-w-0 min-h-[44px]"
                   loading={warehouseFilterOptionsLoading}
                 />
@@ -694,7 +697,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   onClick={() => setWarehouseFilter(undefined)}
                   className="whitespace-nowrap"
                 >
-                  Clear Filter
+                  {t("common.cancel")}
                 </Button>
               )}
             </div>
@@ -702,22 +705,22 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               {/* Mobile View */}
               <div className="md:hidden">
                 <div className="p-3 bg-muted/50 border-b space-y-2">
-                  <div className="font-semibold text-sm">Totals:</div>
+                  <div className="font-semibold text-sm">{t("common.total")}:</div>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
-                      <div className="text-muted-foreground">Stock Qty:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.stock_qty")}:</div>
                       <div className="font-medium">{formatNumber(stockTotal.stock)}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Stock (Pcs):</div>
+                      <div className="text-muted-foreground">{t("tables.headers.stock_in_pcs")}:</div>
                       <div className="font-medium">{formatNumber(stockTotal.stockInPcs)}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Total Cost:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.total_cost")}:</div>
                       <div className="font-medium">{formatCurrencyTable(stockTotal.totalCost)}</div>
                     </div>
                     <div>
-                      <div className="text-muted-foreground">Cost with VAT:</div>
+                      <div className="text-muted-foreground">{t("tables.headers.total_cost_with_vat")}:</div>
                       <div className="font-medium">{formatCurrencyTable(stockTotal.totalCostWithVAT)}</div>
                     </div>
                   </div>
@@ -728,24 +731,24 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                       <div className="text-sm font-medium truncate">{stock.product_name}</div>
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <span className="text-muted-foreground">Qty:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.stock_qty")}:</span><br/>
                           <span className="font-medium">{formatNumber(stock.stock_quantity || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Pieces:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.stock_in_pcs")}:</span><br/>
                           <span className="font-medium">{formatNumber(stock.stock_in_pieces || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Unit Cost:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.unit_cost_header")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(stock.unit_cost || 0)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Total Cost:</span><br/>
+                          <span className="text-muted-foreground">{t("tables.headers.total_cost")}:</span><br/>
                           <span className="font-medium">{formatCurrencyTable(stock.current_stock_value || 0)}</span>
                         </div>
                       </div>
                       <div className="text-xs">
-                        <span className="text-muted-foreground">With VAT:</span>
+                        <span className="text-muted-foreground">{t("tables.headers.total_cost_with_vat")}:</span>
                         <span className="font-medium ml-1">{formatCurrencyTable(stock.stock_value_with_vat || 0)}</span>
                       </div>
                     </div>
@@ -758,15 +761,15 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="text-right">Stock Qty</TableHead>
-                    <TableHead className="text-right">Stock in Pcs</TableHead>
-                    <TableHead className="text-right">Unit Cost</TableHead>
-                    <TableHead className="text-right">Total Cost</TableHead>
-                    <TableHead className="text-right">Total Cost with VAT</TableHead>
+                    <TableHead>{t("tables.headers.name")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.stock_qty")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.stock_in_pcs")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.unit_cost_header")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.total_cost")}</TableHead>
+                    <TableHead className="text-right">{t("tables.headers.total_cost_with_vat")}</TableHead>
                   </TableRow>
                   <TableRow>
-                    <TableHead className="bg-muted font-semibold">Total:</TableHead>
+                    <TableHead className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
                     <TableHead className="bg-muted font-semibold text-right">
                       {formatNumber(stockTotal.stock)}
                     </TableHead>

@@ -31,9 +31,9 @@ export function usePWA() {
     const checkInstallation = () => {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isInWebAppiOS = 'standalone' in window.navigator && (window.navigator as any).standalone;
+      const isInWebAppiOS = 'standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone;
       
-      setIsInstalled(isStandalone || (isIOS && isInWebAppiOS));
+      setIsInstalled(isStandalone || (isIOS && Boolean(isInWebAppiOS)));
     };
 
     checkInstallation();

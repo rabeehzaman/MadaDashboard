@@ -9,8 +9,10 @@ import { ChartsSection } from "@/components/dashboard/charts-section"
 import { DateFilter, type DateRange } from "@/components/dashboard/date-filter"
 import { BranchFilter, type BranchFilterValue } from "@/components/dashboard/branch-filter"
 import { startOfMonth, endOfDay } from "date-fns"
+import { useLocale } from "@/i18n/locale-provider"
 
 export default function Home() {
+  const { t, isArabic } = useLocale()
   const [dateRange, setDateRange] = React.useState<DateRange>(() => {
     const now = new Date()
     return {
@@ -23,9 +25,9 @@ export default function Home() {
   return (
     <DashboardLayout>
       {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full max-w-full overflow-x-hidden">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Dashboard Overview</h2>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 w-full sm:w-auto max-w-full overflow-x-hidden">
+      <div className={`filter-controls flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full max-w-full overflow-x-hidden ${isArabic ? 'sm:flex-row-reverse' : ''}`}>
+        <h2 className={`text-xl sm:text-2xl font-bold tracking-tight truncate ${isArabic ? 'text-right' : ''}`}>{t("dashboard.overview")}</h2>
+        <div className={`flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 w-full sm:w-auto max-w-full overflow-x-hidden ${isArabic ? 'sm:flex-row-reverse' : ''}`}>
           <BranchFilter 
             value={branchFilter}
             onValueChange={setBranchFilter}
@@ -49,7 +51,9 @@ export default function Home() {
       <ChartsSection dateRange={dateRange} branchFilter={branchFilter} />
       
       {/* Optimized Tabbed Data Tables */}
-      <OptimizedTabbedTables dateRange={dateRange} branchFilter={branchFilter} />
+      <div className="table-container">
+        <OptimizedTabbedTables dateRange={dateRange} branchFilter={branchFilter} />
+      </div>
     </DashboardLayout>
   )
 }

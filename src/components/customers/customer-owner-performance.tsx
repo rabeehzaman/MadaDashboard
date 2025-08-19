@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCustomerAgingData } from "@/hooks/use-customer-aging-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { 
   Users, 
@@ -99,6 +100,7 @@ interface CustomerOwnerPerformanceProps {
 }
 
 export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerformanceProps) {
+  const { t } = useLocale()
   const { data: agingData, loading, error } = useCustomerAgingData()
 
   // Process data to get owner performance
@@ -182,8 +184,8 @@ export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerform
     return (
       <Card className="border-red-200">
         <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Data</CardTitle>
-          <CardDescription>Failed to load customer owner performance data</CardDescription>
+          <CardTitle className="text-red-600">{t("common.error")}</CardTitle>
+          <CardDescription>{t("customers.messages.failed_to_load_performance")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -201,9 +203,9 @@ export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerform
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Customer Owner Performance
+            {t("customers.charts.owner_performance")}
           </CardTitle>
-          <CardDescription>Collection efficiency by sales person</CardDescription>
+          <CardDescription>{t("customers.charts.collection_efficiency")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-64 w-full mb-6">
@@ -225,14 +227,14 @@ export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerform
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Customer Owner Performance
+            {t("customers.charts.owner_performance")}
           </CardTitle>
-          <CardDescription>Collection efficiency by sales person</CardDescription>
+          <CardDescription>{t("customers.charts.collection_efficiency")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">No owner performance data available</p>
+            <p className="text-sm text-muted-foreground">{t("customers.messages.no_performance_data")}</p>
           </div>
         </CardContent>
       </Card>
@@ -244,10 +246,10 @@ export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerform
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5" />
-          Customer Owner Performance
+          {t("customers.charts.owner_performance")}
         </CardTitle>
         <CardDescription>
-          Collection efficiency and receivables management by sales person
+          {t("customers.charts.collection_efficiency_detailed")}
           {selectedOwner && selectedOwner !== 'All' && (
             <span className="ml-2 text-primary font-medium">• Filtered by: {selectedOwner}</span>
           )}
@@ -341,23 +343,23 @@ export function CustomerOwnerPerformance({ selectedOwner }: CustomerOwnerPerform
         <div className="mt-4 pt-4 border-t">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-muted-foreground">Total Owners:</span>
+              <span className="text-muted-foreground">{t("customers.charts.total_owners")}:</span>
               <span className="ml-2 font-medium">{ownerPerformance.length}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Best Performer:</span>
+              <span className="text-muted-foreground">{t("customers.charts.best_performer")}:</span>
               <span className="ml-2 font-medium text-green-600">
                 {ownerPerformance[0]?.owner_name || 'N/A'}
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">Total Customers:</span>
+              <span className="text-muted-foreground">{t("customers.charts.total_customers_label")}:</span>
               <span className="ml-2 font-medium">
                 {ownerPerformance.reduce((sum, owner) => sum + owner.customers_with_balance, 0)}
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">Combined Receivables:</span>
+              <span className="text-muted-foreground">{t("customers.charts.combined_receivables")}:</span>
               <span className="ml-2 font-medium">
                 {formatCurrency(
                   ownerPerformance.reduce((sum, owner) => sum + owner.total_receivables, 0)

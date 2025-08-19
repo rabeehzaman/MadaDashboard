@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TrendingUp, TrendingDown, DollarSign, Percent, ShoppingCart, Receipt, Package, Warehouse, Calendar, Eye } from "lucide-react"
 import { useOptimizedKPIs } from "@/hooks/use-optimized-data"
 import { formatCurrency, formatNumber } from "@/lib/formatting"
+import { useLocale } from "@/i18n/locale-provider"
 import type { DateRange } from "@/components/dashboard/date-filter"
 
 interface KPICardProps {
@@ -82,6 +83,7 @@ interface KPICardsProps {
 
 export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
   const { kpis, loading, error } = useOptimizedKPIs(dateRange, branchFilter)
+  const { t } = useLocale()
 
   if (error) {
     return (
@@ -89,10 +91,10 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="border-red-200 dark:border-red-800">
             <CardHeader>
-              <CardTitle className="text-red-600 dark:text-red-400">Error</CardTitle>
+              <CardTitle className="text-red-600 dark:text-red-400">{t("messages.error")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Failed to load data</p>
+              <p className="text-sm text-muted-foreground">{t("messages.failed_to_load")}</p>
             </CardContent>
           </Card>
         ))}
@@ -106,10 +108,10 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="border-yellow-200 dark:border-yellow-800">
             <CardHeader>
-              <CardTitle className="text-yellow-600 dark:text-yellow-400">No Data</CardTitle>
+              <CardTitle className="text-yellow-600 dark:text-yellow-400">{t("messages.no_data")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">No data available</p>
+              <p className="text-sm text-muted-foreground">{t("messages.no_data_available")}</p>
             </CardContent>
           </Card>
         ))}
@@ -124,9 +126,9 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
         <div className="flex items-center justify-end text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span>Database optimized</span>
+            <span>{t("kpi.database_optimized")}</span>
             <span className="ml-2">
-              ({kpis.total_invoices} invoices, {kpis.total_line_items} items)
+              ({kpis.total_invoices} {t("kpi.invoices")}, {kpis.total_line_items} {t("kpi.items")})
             </span>
           </div>
         </div>
@@ -134,25 +136,25 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
       
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
-          title="Total Revenue"
+          title={t("kpi.total_revenue")}
           value={formatCurrency(kpis?.total_revenue || 0)}
           icon={<DollarSign className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="Taxable Sales"
+          title={t("kpi.taxable_sales")}
           value={formatCurrency(kpis?.total_taxable_sales || 0)}
           icon={<Receipt className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="Net Profit"
+          title={t("kpi.net_profit")}
           value={formatCurrency(kpis?.total_profit || 0)}
           icon={<TrendingUp className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="Profit Margin"
+          title={t("kpi.profit_margin")}
           value={`${(kpis?.profit_margin_percent || 0).toFixed(1)}%`}
           icon={<Percent className="h-4 w-4" />}
           loading={loading}
@@ -164,11 +166,12 @@ export function KPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
 
 export function ExtendedKPICards({ dateRange, branchFilter }: KPICardsProps = {}) {
   const { kpis, loading, error } = useOptimizedKPIs(dateRange, branchFilter)
+  const { t } = useLocale()
 
   if (error) {
     return (
       <div className="text-red-600 dark:text-red-400 text-center py-4">
-        Failed to load KPI data
+        {t("messages.failed_to_load_kpi")}
       </div>
     )
   }
@@ -178,25 +181,25 @@ export function ExtendedKPICards({ dateRange, branchFilter }: KPICardsProps = {}
       {/* First row - Original extended KPIs */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
-          title="Gross Profit"
+          title={t("kpi.gross_profit")}
           value={formatCurrency(kpis?.gross_profit || 0)}
           icon={<TrendingUp className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="GP %"
+          title={t("kpi.gp_percentage")}
           value={`${(kpis?.gross_profit_percentage || 0).toFixed(1)}%`}
           icon={<Percent className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="Total Stock Value (All Warehouses)"
+          title={t("kpi.total_stock_value")}
           value={formatCurrency(kpis?.total_stock_value || 0)}
           icon={<Warehouse className="h-4 w-4" />}
           loading={loading}
         />
         <KPICard
-          title="Daily Avg Sales"
+          title={t("kpi.daily_avg_sales")}
           value={formatCurrency(kpis?.daily_avg_sales || 0)}
           icon={<Calendar className="h-4 w-4" />}
           loading={loading}
@@ -206,7 +209,7 @@ export function ExtendedKPICards({ dateRange, branchFilter }: KPICardsProps = {}
       {/* Second row - Additional metrics */}
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
         <KPICard
-          title="Visits (Invoices)"
+          title={`${t("nav.overview")} (${t("kpi.invoices")})`}
           value={formatNumber(kpis?.total_invoices || 0)}
           icon={<Eye className="h-4 w-4" />}
           loading={loading}

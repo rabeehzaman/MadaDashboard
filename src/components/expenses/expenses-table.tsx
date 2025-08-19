@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/formatting"
+import { useLocale } from "@/i18n/locale-provider"
 import { format } from "date-fns"
 import type { DateRange } from "@/components/dashboard/date-filter"
 import type { BranchFilterValue } from "@/components/dashboard/branch-filter"
@@ -25,6 +26,7 @@ interface ExpensesTableProps {
 }
 
 export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
+  const { t } = useLocale()
   const { data: expenses, loading, error } = useExpenses(branchFilter, dateRange)
   const [searchTerm, setSearchTerm] = React.useState("")
 
@@ -50,7 +52,7 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Loading Expenses...</CardTitle>
+          <CardTitle>{t("pages.expenses.loading_expenses")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -66,11 +68,11 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Error Loading Expenses</CardTitle>
+          <CardTitle>{t("pages.expenses.error_loading_expenses")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
-            <p>Error loading expenses: {error}</p>
+            <p>{t("pages.expenses.error_loading_message")}{error}</p>
           </div>
         </CardContent>
       </Card>
@@ -80,17 +82,17 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expenses</CardTitle>
+        <CardTitle>{t("pages.expenses.expenses_table_title")}</CardTitle>
         <CardDescription>
-          {filteredExpenses.length} of {expenses?.length || 0} expenses
-          {branchFilter && ` • Filtered by: ${branchFilter}`}
+          {filteredExpenses.length} {t("pages.expenses.expenses_count")} {expenses?.length || 0} {t("pages.expenses.expenses_plural")}
+          {branchFilter && ` • ${t("pages.expenses.filtered_by")}${branchFilter}`}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {/* Search Input */}
         <div className="mb-4">
           <Input
-            placeholder="Search expenses..."
+            placeholder={t("pages.expenses.search_placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -111,15 +113,15 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
             <TableBody>
               {/* Total Row */}
               <TableRow className="bg-muted/50 font-semibold border-b-2">
-                <TableCell className="font-bold">Total</TableCell>
+                <TableCell className="font-bold">{t("pages.expenses.total_row")}</TableCell>
                 <TableCell className="font-bold">
-                  {filteredExpenses.length} expense{filteredExpenses.length !== 1 ? 's' : ''}
+                  {filteredExpenses.length} {filteredExpenses.length !== 1 ? t("pages.expenses.expenses_plural") : t("pages.expenses.expense_singular")}
                 </TableCell>
                 <TableCell className="text-right font-bold text-lg">
                   {formatCurrency(totalAmount)}
                 </TableCell>
                 <TableCell className="font-bold">
-                  {branchFilter ? branchFilter : "All Branches"}
+                  {branchFilter ? branchFilter : t("pages.expenses.all_branches")}
                 </TableCell>
               </TableRow>
               
@@ -150,7 +152,7 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
             </TableBody>
             {filteredExpenses.length === 0 && (
               <TableCaption>
-                {searchTerm ? "No expenses match your search." : "No expenses found."}
+                {searchTerm ? t("pages.expenses.no_match_search") : t("pages.expenses.no_expenses_found")}
               </TableCaption>
             )}
           </Table>

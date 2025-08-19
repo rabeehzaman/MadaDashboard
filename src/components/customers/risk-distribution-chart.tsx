@@ -4,6 +4,7 @@ import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRiskCategoryDistribution } from "@/hooks/use-customer-aging-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { AlertTriangle, PieChart as PieChartIcon } from "lucide-react"
 
@@ -78,14 +79,15 @@ interface RiskDistributionChartProps {
 }
 
 export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartProps) {
+  const { t } = useLocale()
   const { data, loading, error } = useRiskCategoryDistribution(selectedOwner)
 
   if (error) {
     return (
       <Card className="border-red-200">
         <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Chart</CardTitle>
-          <CardDescription>Failed to load risk distribution data</CardDescription>
+          <CardTitle className="text-red-600">{t("customers.charts.error_loading_chart")}</CardTitle>
+          <CardDescription>{t("customers.charts.failed_to_load_risk")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -103,9 +105,9 @@ export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <PieChartIcon className="h-5 w-5" />
-            Risk Distribution
+{t("customers.charts.risk_distribution")}
           </CardTitle>
-          <CardDescription>Customer risk categories by outstanding amount</CardDescription>
+          <CardDescription>{t("pages.customers.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64">
@@ -136,14 +138,14 @@ export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <PieChartIcon className="h-5 w-5" />
-            Risk Distribution
+{t("customers.charts.risk_distribution")}
           </CardTitle>
-          <CardDescription>Customer risk categories by outstanding amount</CardDescription>
+          <CardDescription>{t("pages.customers.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <PieChartIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">No risk distribution data available</p>
+            <p className="text-sm text-muted-foreground">{t("common.no_data_available")}</p>
           </div>
         </CardContent>
       </Card>
@@ -163,10 +165,10 @@ export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartPr
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PieChartIcon className="h-5 w-5" />
-          Risk Distribution
+          {t("customers.charts.risk_distribution")}
         </CardTitle>
         <CardDescription>
-          Customer risk categories by outstanding amount
+          {t("pages.customers.description")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -204,7 +206,7 @@ export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartPr
                 {formatCurrency(totalAmount.toString())}
               </div>
               <div className="text-xs text-muted-foreground">
-                Total Outstanding
+                {t("pages.vendors.total_outstanding")}
               </div>
             </div>
           </div>
@@ -217,16 +219,16 @@ export function RiskDistributionChart({ selectedOwner }: RiskDistributionChartPr
         <div className="mt-4 pt-4 border-t">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-muted-foreground">Total Customers:</span>
+              <span className="text-muted-foreground">{t("customers.charts.total_customers_label")}</span>
               <span className="ml-2 font-medium">
                 {data.reduce((sum, item) => sum + item.customer_count, 0)}
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">High Risk:</span>
+              <span className="text-muted-foreground">{t("customers.charts.high_risk_label")}</span>
               <span className="ml-2 font-medium text-red-600">
                 {data.filter(item => item.risk_level === 'High' || item.risk_level === 'Very High')
-                     .reduce((sum, item) => sum + item.customer_count, 0)} customers
+                     .reduce((sum, item) => sum + item.customer_count, 0)} {t("customers.table_headers.customers")}
               </span>
             </div>
           </div>

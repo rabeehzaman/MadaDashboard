@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { useCustomerAgingSummaryKPIs } from "@/hooks/use-customer-aging-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { 
   DollarSign, 
   Users, 
@@ -86,6 +87,7 @@ interface CustomerAgingKPICardsProps {
 }
 
 export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsProps) {
+  const { t } = useLocale()
   const { data, loading, error } = useCustomerAgingSummaryKPIs(selectedOwner)
 
   if (error) {
@@ -96,7 +98,7 @@ export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsPr
             <CardContent className="p-6">
               <div className="text-center text-red-600">
                 <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-                <p className="text-sm">Failed to load KPIs</p>
+                <p className="text-sm">{t("customers.messages.failed_to_load_kpis")}</p>
               </div>
             </CardContent>
           </Card>
@@ -109,12 +111,12 @@ export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsPr
     <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {/* Total Receivables */}
       <KPICard
-        title="Total Receivables"
-        value={data ? formatCurrency(data.total_receivables) : "Loading..."}
-        subtitle={data ? `${data.total_customers_with_balance} customers with balance` : undefined}
+        title={t("customers.kpi.total_receivables")}
+        value={data ? formatCurrency(data.total_receivables) : t("common.loading")}
+        subtitle={data ? `${data.total_customers_with_balance} ${t("customers.kpi.customers_with_balance")}` : undefined}
         icon={DollarSign}
         badge={data ? {
-          text: `${data.total_outstanding_invoices} invoices`,
+          text: `${data.total_outstanding_invoices} ${t("customers.table_headers.invoices")}`,
           variant: "secondary"
         } : undefined}
         loading={loading}
@@ -122,12 +124,12 @@ export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsPr
 
       {/* Current (0-30 days) */}
       <KPICard
-        title="Current (0-30 days)"
-        value={data ? formatPercentage(data.current_percentage) : "Loading..."}
-        subtitle={data ? `${formatCurrency(data.current_amount)} from ${data.current_customers_count} customers` : undefined}
+        title={t("customers.kpi.current_0_30_days")}
+        value={data ? formatPercentage(data.current_percentage) : t("common.loading")}
+        subtitle={data ? `${formatCurrency(data.current_amount)} ${t("customers.kpi.from_customers")} ${data.current_customers_count}` : undefined}
         icon={Users}
         badge={data ? {
-          text: "Good",
+          text: t("customers.status_badges.good"),
           variant: "default"
         } : undefined}
         loading={loading}
@@ -135,20 +137,20 @@ export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsPr
 
       {/* Past Due (31-180 days) */}
       <KPICard
-        title="Past Due (31-180 days)"
+        title={t("customers.kpi.past_due_31_180_days")}
         value={data ? formatPercentage(
           (parseFloat(data.past_due_31_60_percentage) + 
            parseFloat(data.past_due_61_90_percentage) + 
            parseFloat(data.past_due_91_180_percentage)).toFixed(2)
-        ) : "Loading..."}
+        ) : t("common.loading")}
         subtitle={data ? `${
           data.past_due_31_60_count + 
           data.past_due_61_90_count + 
           data.past_due_91_180_count
-        } customers need attention` : undefined}
+        } ${t("customers.kpi.customers_need_attention")}` : undefined}
         icon={Clock}
         badge={data ? {
-          text: "Watch",
+          text: t("customers.status_badges.watch"),
           variant: "outline"
         } : undefined}
         loading={loading}
@@ -156,12 +158,12 @@ export function CustomerAgingKPICards({ selectedOwner }: CustomerAgingKPICardsPr
 
       {/* High Risk (180+ days) */}
       <KPICard
-        title="High Risk (180+ days)"
-        value={data ? formatPercentage(data.over_180_percentage) : "Loading..."}
-        subtitle={data ? `${formatCurrency(data.over_180_amount)} from ${data.over_180_count} customers` : undefined}
+        title={t("customers.kpi.high_risk_180_days")}
+        value={data ? formatPercentage(data.over_180_percentage) : t("common.loading")}
+        subtitle={data ? `${formatCurrency(data.over_180_amount)} ${t("customers.kpi.from_customers")} ${data.over_180_count}` : undefined}
         icon={AlertTriangle}
         badge={data ? {
-          text: "Critical",
+          text: t("customers.status_badges.critical"),
           variant: "destructive"
         } : undefined}
         loading={loading}

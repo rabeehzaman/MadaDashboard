@@ -1,0 +1,346 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "customers": "Customers",
+    "vendors": "Vendors",
+    "expenses": "Expenses",
+    "financials": "Financials",
+    "navigation": "Navigation"
+  },
+  "dashboard": {
+    "title": "Mada Dashboard",
+    "subtitle": "Profit Analytics",
+    "overview": "Dashboard Overview"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "no_data": "No data available",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "refresh": "Refresh",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "total": "Total",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "filters": {
+    "branch": "Branch",
+    "date_range": "Date Range",
+    "all_branches": "All Branches",
+    "loading": "Loading...",
+    "error_loading_branches": "Error loading branches",
+    "filter_by_item": "Filter by item...",
+    "filter_by_customer": "Filter by customer...",
+    "filter_by_invoice": "Filter by invoice...",
+    "filter_by_warehouse": "Filter by warehouse...",
+    "search_items": "Search items...",
+    "search_customers": "Search customers...",
+    "search_invoices": "Search invoices...",
+    "search_warehouses": "Search warehouses...",
+    "date_presets": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "day_before_yesterday": "Day Before Yesterday",
+      "this_week": "This Week",
+      "last_week": "Last Week",
+      "this_month": "This Month",
+      "previous_month": "Previous Month",
+      "this_year": "This Year",
+      "previous_year": "Previous Year",
+      "custom_range": "Custom Range"
+    }
+  },
+  "kpi": {
+    "revenue": "Revenue",
+    "expenses": "Expenses",
+    "profit": "Profit",
+    "growth": "Growth",
+    "total_revenue": "Total Revenue",
+    "taxable_sales": "Taxable Sales",
+    "net_profit": "Net Profit",
+    "profit_margin": "Profit Margin",
+    "gross_profit": "Gross Profit",
+    "gp_percentage": "GP %",
+    "total_stock_value": "Total Stock Value (All Warehouses)",
+    "daily_avg_sales": "Daily Avg Sales",
+    "database_optimized": "Database optimized",
+    "invoices": "invoices",
+    "items": "items"
+  },
+  "tables": {
+    "headers": {
+      "date": "Date",
+      "invoice_number": "Invoice #",
+      "item": "Item",
+      "customer_name": "Customer Name",
+      "unit_price": "U.Price",
+      "unit_cost": "U.Cost",
+      "unit_profit": "Unit Profit",
+      "profit_percentage": "Profit %",
+      "sale_price": "Sale Price",
+      "cost": "Cost",
+      "profit": "Profit",
+      "name": "Name",
+      "stock_qty": "Stock Qty",
+      "stock_in_pcs": "Stock in Pcs",
+      "unit_cost_header": "Unit Cost",
+      "total_cost": "Total Cost",
+      "total_cost_with_vat": "Total Cost with VAT",
+      "total": "Total:"
+    },
+    "tabs": {
+      "profit_by_item": "Profit by Item",
+      "profit_by_customer": "Profit by Customer",
+      "profit_by_invoice": "Profit by Invoice",
+      "stock_report": "Stock Report",
+      "items_short": "Items",
+      "customers": "Customers",
+      "invoices": "Invoices",
+      "stock": "Stock"
+    },
+    "title": "Optimized Analysis Tables",
+    "description": "Database-optimized views with perfect KPI consistency",
+    "performance_note": "2025 data only for optimal performance",
+    "clear_all": "Clear All",
+    "filters_label": "Filters:",
+    "products_label": "products",
+    "total_reflects_note": "Total reflects filtered data",
+    "kpi_shows_note": "KPI shows all warehouses",
+    "filter_placeholders": {
+      "customer": "Filter by customer...",
+      "customer_search": "Search customers...",
+      "invoice": "Filter by invoice...",
+      "invoice_search": "Search invoices..."
+    }
+  },
+  "charts": {
+    "title": "Business Analytics & Charts",
+    "subtitle": "Visual insights from your business data",
+    "tabs": {
+      "trends": "Trends",
+      "performance": "Performance",
+      "distribution": "Distribution",
+      "inventory": "Inventory"
+    },
+    "titles": {
+      "daily_revenue_trend": "Daily Revenue Trend",
+      "top_selling_products": "Top Selling Products",
+      "top_customers": "Top Customers",
+      "monthly_revenue": "Monthly Revenue Comparison",
+      "branch_performance": "Branch Performance",
+      "profit_margin_distribution": "Profit Margin Distribution",
+      "customer_profit_margins": "Customer Profit Margins",
+      "stock_by_warehouse": "Stock by Warehouse",
+      "inventory_summary": "Inventory Summary",
+      "avg_monthly_revenue": "Avg Monthly Revenue",
+      "avg_profit_margin": "Avg Profit Margin"
+    },
+    "badges": {
+      "interactive": "Interactive Charts",
+      "realtime": "Real-time Data",
+      "optimized": "2025 Optimized"
+    },
+    "info": {
+      "title": "📊 Chart Information:",
+      "performance_note": "All charts use 2025 data for optimal performance",
+      "filter_note": "Data is filtered based on your selected date range and branch",
+      "refresh_note": "Charts automatically refresh when filters are changed",
+      "hover_note": "Hover over chart elements for detailed information",
+      "responsive_note": "Charts are optimized for both desktop and mobile viewing"
+    }
+  },
+  "actions": {
+    "show_all": "Show All",
+    "load_more": "Load More",
+    "export": "Export",
+    "refresh": "Refresh"
+  },
+  "messages": {
+    "error": "Error",
+    "failed_to_load": "Failed to load data",
+    "no_data": "No Data",
+    "no_data_available": "No data available",
+    "failed_to_load_kpi": "Failed to load KPI data",
+    "using_rpc": "Using optimized RPC functions and database views"
+  },
+  "pages": {
+    "expenses": {
+      "title": "Expenses Dashboard",
+      "description": "Monitor and analyze all business expenses across branches",
+      "all_expenses": "All Expenses",
+      "loading_expenses": "Loading Expenses...",
+      "error_loading_expenses": "Error Loading Expenses",
+      "error_loading_message": "Error loading expenses: ",
+      "expenses_table_title": "Expenses",
+      "expenses_count": "of",
+      "expenses_plural": "expenses",
+      "expense_singular": "expense",
+      "filtered_by": "Filtered by: ",
+      "search_placeholder": "Search expenses...",
+      "total_row": "Total",
+      "all_branches": "All Branches",
+      "no_match_search": "No expenses match your search.",
+      "no_expenses_found": "No expenses found."
+    },
+    "customers": {
+      "title": "Customer Aging Dashboard",
+      "description": "Monitor receivables, collection priorities, and customer payment behavior",
+      "filter_title": "Customer Aging Dashboard Filter",
+      "filter_description": "Filter all dashboard components by customer owner",
+      "customer_owner": "Customer Owner:",
+      "detailed_aging": "Detailed Customer Aging",
+      "search_placeholder": "Search by customer name...",
+      "summary_totals": "Summary Totals:",
+      "total_balance": "Total Balance:",
+      "current_0_30": "Current (0-30):",
+      "past_due_31_180": "Past Due (31-180):",
+      "high_risk_180_plus": "High Risk (180+):",
+      "no_customers_found": "No customers found",
+      "no_customers_search": "No customers found matching",
+      "for_owner": "for owner",
+      "loading_customer_data": "Loading customer data...",
+      "error_loading_data": "Error loading customer data",
+      "total_shown": "Total shown:"
+    },
+    "vendors": {
+      "title": "Vendors",
+      "description": "Monitor vendor relationships, aging balances, and payment performance",
+      "search_placeholder": "Search by vendor name...",
+      "filter_by_risk": "Filter by Risk:",
+      "loading_aging_analysis": "Loading aging analysis...",
+      "error_loading_aging": "Error loading aging data",
+      "total_outstanding": "Total Outstanding",
+      "current_0_30_days": "Current (0-30 days)",
+      "days_31_90": "31-90 days",
+      "over_90_days": "Over 90 days",
+      "days_avg": "days avg",
+      "no_payment_data": "No payment data"
+    }
+  },
+  "customers": {
+    "kpi": {
+      "total_receivables": "Total Receivables",
+      "customers_with_balance": "customers with balance",
+      "current_0_30_days": "Current (0-30 days)",
+      "past_due_31_180_days": "Past Due (31-180 days)",
+      "high_risk_180_days": "High Risk (180+ days)",
+      "customers_need_attention": "customers need attention",
+      "from_customers": "from customers"
+    },
+    "risk_categories": {
+      "current": "Current",
+      "low_risk": "Low Risk",
+      "medium_risk": "Medium Risk",
+      "high_risk": "High Risk",
+      "very_high_risk": "Very High Risk"
+    },
+    "status_badges": {
+      "good": "Good",
+      "watch": "Watch",
+      "critical": "Critical"
+    },
+    "charts": {
+      "risk_distribution": "Risk Distribution",
+      "top_overdue_customers": "Top Overdue Customers",
+      "customer_owner_performance": "Customer Owner Performance",
+      "owner_performance": "Customer Owner Performance",
+      "collection_efficiency": "Collection efficiency by sales person",
+      "collection_efficiency_detailed": "Collection efficiency and receivables management by sales person",
+      "no_overdue_customers": "No overdue customers found",
+      "error_loading_chart": "Error Loading Chart",
+      "failed_to_load_risk": "Failed to load risk distribution data",
+      "error_loading_data": "Error Loading Data",
+      "failed_to_load_performance": "Failed to load customer owner performance data",
+      "total_owners": "Total Owners",
+      "best_performer": "Best Performer",
+      "total_customers_label": "Total Customers",
+      "combined_receivables": "Combined Receivables",
+      "high_risk_label": "High Risk"
+    },
+    "table_headers": {
+      "customer_name": "Customer Name",
+      "customer_owner": "Customer Owner",
+      "current_0_30": "Current (0-30)",
+      "past_due_31_60": "31-60",
+      "past_due_61_90": "61-90",
+      "past_due_91_180": "91-180",
+      "high_risk_180": "180+ Days",
+      "invoices": "invoices",
+      "days_ago": "days ago",
+      "customers": "customers",
+      "high_risk": "high risk"
+    },
+    "messages": {
+      "failed_to_load_kpis": "Failed to load KPIs",
+      "failed_to_load_overdue": "Failed to load top overdue customers",
+      "failed_to_load_performance": "Failed to load customer owner performance data",
+      "no_performance_data": "No owner performance data available",
+      "status_invoices": "Status:",
+      "invoices_count": "Invoices:"
+    }
+  },
+  "vendors": {
+    "kpi": {
+      "outstanding_bills": "Outstanding Bills",
+      "avg_payment_days": "Avg Payment Days",
+      "overdue_rate": "Overdue Rate",
+      "active_vendors": "Active Vendors",
+      "payment_success": "Payment Success",
+      "days_to_payment": "Days to payment completion",
+      "this_month": "This month"
+    },
+    "status_badges": {
+      "high_risk": "High Risk",
+      "monitor": "Monitor",
+      "slow": "Slow",
+      "average": "Average",
+      "good": "Good",
+      "critical": "Critical",
+      "warning": "Warning",
+      "high_activity": "High Activity",
+      "normal": "Normal",
+      "excellent": "Excellent",
+      "needs_work": "Needs Work"
+    },
+    "performance": {
+      "title": "Vendor Performance Scorecard",
+      "description": "Top performing vendors by business impact, payment reliability, and cash conversion (excl. opening balance)",
+      "fast_payers": "Fast Payers:",
+      "high_reliability": "High Reliability:",
+      "complete_payers": "Complete Payers:",
+      "risk_concentration": "Risk Concentration:",
+      "vendors_pay_within_30": "vendors pay within 30 days",
+      "vendors_with_reliability": "vendors with 80+ reliability score",
+      "vendors_payment_completion": "vendors with 95%+ payment completion",
+      "vendors_represent": "vendors represent >10% of business each",
+      "total_business_share": "Total Business Share",
+      "avg_payment_time": "Avg Payment Time",
+      "payment_insights": "Payment Insights",
+      "pay_days_explanation": "Pay Days: Actual days from bill to payment.",
+      "loading_performance_data": "Loading vendor performance data...",
+      "error_loading_performance": "Error loading performance data"
+    },
+    "table_headers": {
+      "vendor_name": "Vendor Name",
+      "risk_category": "Risk Category",
+      "current_0_30": "Current (0-30)",
+      "days_31_60": "31-60",
+      "days_61_90": "61-90",
+      "over_90": "Over 90"
+    },
+    "messages": {
+      "failed_to_load_kpis": "Failed to load KPIs"
+    }
+  }
+}

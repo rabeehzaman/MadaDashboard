@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTopOverdueCustomers } from "@/hooks/use-customer-aging-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { 
   AlertTriangle, 
   Clock, 
@@ -66,6 +67,7 @@ interface TopOverdueCustomersProps {
 }
 
 export function TopOverdueCustomers({ selectedOwner }: TopOverdueCustomersProps) {
+  const { t } = useLocale()
   const { data: allData, loading, error } = useTopOverdueCustomers(50)
   
   // Filter data by selected owner
@@ -80,8 +82,8 @@ export function TopOverdueCustomers({ selectedOwner }: TopOverdueCustomersProps)
     return (
       <Card className="border-red-200">
         <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Data</CardTitle>
-          <CardDescription>Failed to load top overdue customers</CardDescription>
+          <CardTitle className="text-red-600">{t("customers.charts.error_loading_data")}</CardTitle>
+          <CardDescription>{t("customers.messages.failed_to_load_overdue")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -98,10 +100,10 @@ export function TopOverdueCustomers({ selectedOwner }: TopOverdueCustomersProps)
       <CardHeader className="p-4 sm:p-6">
         <CardTitle className="flex items-start gap-2 text-base sm:text-lg">
           <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 mt-0.5" />
-          <span className="leading-tight">Top Priority Collections</span>
+          <span className="leading-tight">{t("customers.charts.top_overdue_customers")}</span>
         </CardTitle>
         <CardDescription className="text-xs sm:text-sm mt-1.5 leading-relaxed">
-          Customers requiring immediate attention (sorted by collection priority)
+          {t("pages.customers.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0">
@@ -114,7 +116,7 @@ export function TopOverdueCustomers({ selectedOwner }: TopOverdueCustomersProps)
         ) : data.length === 0 ? (
           <div className="text-center py-8">
             <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">No overdue customers found</p>
+            <p className="text-sm text-muted-foreground">{t("customers.charts.no_overdue_customers")}</p>
           </div>
         ) : (
           <div className="max-h-[400px] sm:max-h-96 overflow-y-auto">
@@ -175,7 +177,7 @@ export function TopOverdueCustomers({ selectedOwner }: TopOverdueCustomersProps)
           <div className="p-3 sm:p-4 border-t bg-muted/30">
             <div className="flex flex-col sm:flex-row justify-between gap-2 text-xs sm:text-sm">
               <span className="text-muted-foreground">
-                Total shown: {data.length} customers
+                {t("pages.customers.total_shown")} {data.length} {t("customers.table_headers.customers")}
               </span>
               <span className="font-medium">
                 Combined: {formatCurrency(

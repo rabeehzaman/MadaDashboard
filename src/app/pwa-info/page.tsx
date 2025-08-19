@@ -29,8 +29,8 @@ export default function PWAInfoPage() {
                 <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
                   <li>Open in Safari browser</li>
                   <li>Tap Share button (square with arrow)</li>
-                  <li>Select "Add to Home Screen"</li>
-                  <li>Tap "Add"</li>
+                  <li>Select &quot;Add to Home Screen&quot;</li>
+                  <li>Tap &quot;Add&quot;</li>
                 </ol>
               </div>
               <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
@@ -56,7 +56,7 @@ export default function PWAInfoPage() {
                 <h4 className="font-medium">Steps:</h4>
                 <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
                   <li>Look for install banner</li>
-                  <li>Tap "Install" or menu → "Install app"</li>
+                  <li>Tap &quot;Install&quot; or menu → &quot;Install app&quot;</li>
                   <li>Confirm installation</li>
                 </ol>
               </div>
@@ -83,7 +83,7 @@ export default function PWAInfoPage() {
                 <h4 className="font-medium">Chrome/Edge:</h4>
                 <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
                   <li>Look for install icon in address bar</li>
-                  <li>Click "Install Mada Dashboard"</li>
+                  <li>Click &quot;Install Mada Dashboard&quot;</li>
                   <li>App opens in dedicated window</li>
                 </ol>
               </div>
@@ -153,7 +153,7 @@ export default function PWAInfoPage() {
         <div className="text-center p-6 bg-muted rounded-lg">
           <h3 className="font-semibold mb-2">Ready to Install?</h3>
           <p className="text-sm text-muted-foreground">
-            Look for the install prompt or use your browser's install option to get the full PWA experience!
+            Look for the install prompt or use your browser&apos;s install option to get the full PWA experience!
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { CalendarIcon } from "lucide-react"
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, subWeeks, subMonths, subYears } from "date-fns"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/i18n/locale-provider"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -32,18 +33,6 @@ interface DateFilterProps {
   className?: string
 }
 
-const datePresets: Array<{ value: DateFilterPreset; label: string }> = [
-  { value: "today", label: "Today" },
-  { value: "yesterday", label: "Yesterday" },
-  { value: "day-before-yesterday", label: "Day Before Yesterday" },
-  { value: "this-week", label: "This Week" },
-  { value: "last-week", label: "Last Week" },
-  { value: "this-month", label: "This Month" },
-  { value: "previous-month", label: "Previous Month" },
-  { value: "this-year", label: "This Year" },
-  { value: "previous-year", label: "Previous Year" },
-  { value: "custom", label: "Custom Range" },
-]
 
 function getDateRangeFromPreset(preset: DateFilterPreset): DateRange | null {
   const today = new Date()
@@ -105,9 +94,23 @@ function getDateRangeFromPreset(preset: DateFilterPreset): DateRange | null {
 }
 
 export function DateFilter({ onDateRangeChange, className }: DateFilterProps) {
+  const { t } = useLocale()
   const [selectedPreset, setSelectedPreset] = React.useState<DateFilterPreset>("this-month")
   const [customDateRange, setCustomDateRange] = React.useState<DateRange | undefined>()
   const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
+  
+  const datePresets: Array<{ value: DateFilterPreset; label: string }> = [
+    { value: "today", label: t("filters.date_presets.today") },
+    { value: "yesterday", label: t("filters.date_presets.yesterday") },
+    { value: "day-before-yesterday", label: t("filters.date_presets.day_before_yesterday") },
+    { value: "this-week", label: t("filters.date_presets.this_week") },
+    { value: "last-week", label: t("filters.date_presets.last_week") },
+    { value: "this-month", label: t("filters.date_presets.this_month") },
+    { value: "previous-month", label: t("filters.date_presets.previous_month") },
+    { value: "this-year", label: t("filters.date_presets.this_year") },
+    { value: "previous-year", label: t("filters.date_presets.previous_year") },
+    { value: "custom", label: t("filters.date_presets.custom_range") },
+  ]
 
   React.useEffect(() => {
     if (selectedPreset === "custom" && customDateRange) {
@@ -152,7 +155,7 @@ export function DateFilter({ onDateRangeChange, className }: DateFilterProps) {
       <Select value={selectedPreset} onValueChange={handlePresetChange}>
         <SelectTrigger className="w-full sm:w-[180px] min-h-[44px] hover:border-primary focus:ring-primary focus:border-primary">
           <CalendarIcon className="h-4 w-4 mr-2" />
-          <SelectValue placeholder="Select period" />
+          <SelectValue placeholder={t("filters.date_range")} />
         </SelectTrigger>
         <SelectContent>
           {datePresets.map((preset) => (
@@ -177,7 +180,7 @@ export function DateFilter({ onDateRangeChange, className }: DateFilterProps) {
               {customDateRange ? (
                 `${format(customDateRange.from, "MMM d, yyyy")} - ${format(customDateRange.to, "MMM d, yyyy")}`
               ) : (
-                "Pick a date range"
+                t("filters.date_range")
               )}
             </Button>
           </PopoverTrigger>

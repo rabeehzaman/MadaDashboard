@@ -38,7 +38,7 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
     data: expensesData,
     loading: expensesLoading,
     error: expensesError
-  } = useExpenses(branchFilter || "All", dateRange)
+  } = useExpenses(branchFilter, dateRange)
 
 
   // Calculate P&L data from invoice and expenses data

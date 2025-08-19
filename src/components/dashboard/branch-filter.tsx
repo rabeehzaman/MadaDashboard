@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select"
 import { Building2, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/i18n/locale-provider"
 import { useActiveBranches } from "@/hooks/use-active-branches"
 import type { DateRange } from "@/components/dashboard/date-filter"
 
@@ -21,6 +22,7 @@ interface BranchFilterProps {
 }
 
 export function BranchFilter({ value, onValueChange, className, dateRange }: BranchFilterProps) {
+  const { t } = useLocale()
   const { branches, loading, error } = useActiveBranches(dateRange)
 
   // Reset branch filter when active branches change and current selection is not available
@@ -42,12 +44,12 @@ export function BranchFilter({ value, onValueChange, className, dateRange }: Bra
         ) : (
           <Building2 className="h-4 w-4" />
         )}
-        <SelectValue placeholder={loading ? "Loading..." : "All Branches"} />
+        <SelectValue placeholder={loading ? t("filters.loading") : t("filters.all_branches")} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All Branches</SelectItem>
+        <SelectItem value="all">{t("filters.all_branches")}</SelectItem>
         {error ? (
-          <SelectItem value="error" disabled>Error loading branches</SelectItem>
+          <SelectItem value="error" disabled>{t("filters.error_loading_branches")}</SelectItem>
         ) : (
           branches.map((branch) => (
             <SelectItem key={branch} value={branch}>

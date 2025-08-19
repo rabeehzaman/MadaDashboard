@@ -16,6 +16,7 @@ import {
   InventorySummaryCard
 } from "@/components/charts/dashboard-charts"
 import { TrendingUp, BarChart3, PieChart, Users, Package, Building2, Warehouse } from "lucide-react"
+import { useLocale } from "@/i18n/locale-provider"
 import type { DateRange } from "./date-filter"
 
 interface ChartsSectionProps {
@@ -24,6 +25,7 @@ interface ChartsSectionProps {
 }
 
 export function ChartsSection({ dateRange, branchFilter }: ChartsSectionProps) {
+  const { t } = useLocale()
   const [activeTab, setActiveTab] = React.useState("trends")
 
   return (
@@ -31,19 +33,19 @@ export function ChartsSection({ dateRange, branchFilter }: ChartsSectionProps) {
       <CardHeader className="w-full max-w-full overflow-hidden px-3 sm:px-6">
         <CardTitle className="flex items-center gap-2 w-full max-w-full overflow-hidden">
           <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-          <span className="truncate">Business Analytics & Charts</span>
+          <span className="truncate">{t("charts.title")}</span>
         </CardTitle>
         <CardDescription className="w-full max-w-full overflow-hidden">
-          <span className="block truncate">Visual insights from your business data</span>
+          <span className="block truncate">{t("charts.subtitle")}</span>
           <div className="hidden sm:flex items-center gap-2 mt-2 flex-wrap">
             <Badge variant="outline" className="text-xs flex-shrink-0">
-              Interactive Charts
+              {t("charts.badges.interactive")}
             </Badge>
             <Badge variant="outline" className="text-xs flex-shrink-0">
-              Real-time Data
+              {t("charts.badges.realtime")}
             </Badge>
             <Badge variant="outline" className="text-xs flex-shrink-0">
-              2025 Optimized
+              {t("charts.badges.optimized")}
             </Badge>
           </div>
         </CardDescription>
@@ -54,19 +56,19 @@ export function ChartsSection({ dateRange, branchFilter }: ChartsSectionProps) {
             <TabsList className="grid w-full grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 gap-1 min-h-[44px] h-auto max-w-full">
             <TabsTrigger value="trends" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-h-[44px] px-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground overflow-hidden">
               <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="truncate">Trends</span>
+              <span className="truncate">{t("charts.tabs.trends")}</span>
             </TabsTrigger>
             <TabsTrigger value="performance" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-h-[44px] px-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground overflow-hidden">
               <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="truncate">Performance</span>
+              <span className="truncate">{t("charts.tabs.performance")}</span>
             </TabsTrigger>
             <TabsTrigger value="distribution" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-h-[44px] px-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground overflow-hidden">
               <PieChart className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="truncate">Distribution</span>
+              <span className="truncate">{t("charts.tabs.distribution")}</span>
             </TabsTrigger>
             <TabsTrigger value="inventory" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-h-[44px] px-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground overflow-hidden">
               <Warehouse className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="truncate">Inventory</span>
+              <span className="truncate">{t("charts.tabs.inventory")}</span>
             </TabsTrigger>
           </TabsList>
           </div>
@@ -106,13 +108,13 @@ export function ChartsSection({ dateRange, branchFilter }: ChartsSectionProps) {
         {/* Chart Information Footer */}
         <div className="mt-8 p-4 bg-muted/50 rounded-lg">
           <div className="text-sm text-muted-foreground">
-            <div className="font-medium mb-2">📊 Chart Information:</div>
+            <div className="font-medium mb-2">{t("charts.info.title")}</div>
             <ul className="space-y-1 text-xs">
-              <li>• All charts use 2025 data for optimal performance</li>
-              <li>• Data is filtered based on your selected date range and branch</li>
-              <li>• Charts automatically refresh when filters are changed</li>
-              <li>• Hover over chart elements for detailed information</li>
-              <li>• Charts are optimized for both desktop and mobile viewing</li>
+              <li>• {t("charts.info.performance_note")}</li>
+              <li>• {t("charts.info.filter_note")}</li>
+              <li>• {t("charts.info.refresh_note")}</li>
+              <li>• {t("charts.info.hover_note")}</li>
+              <li>• {t("charts.info.responsive_note")}</li>
             </ul>
           </div>
         </div>

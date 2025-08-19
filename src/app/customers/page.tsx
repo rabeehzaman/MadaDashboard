@@ -15,8 +15,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useCustomerOwners } from "@/hooks/use-customer-aging-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 
 export default function CustomersPage() {
+  const { t } = useLocale()
   const [selectedOwner, setSelectedOwner] = React.useState<string>("All")
   const { owners: availableOwners, loading: ownersLoading } = useCustomerOwners()
 
@@ -24,9 +26,9 @@ export default function CustomersPage() {
     <DashboardLayout>
       <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6 w-full max-w-full">
         <div className="px-1">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">Customer Aging Dashboard</h2>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">{t("pages.customers.title")}</h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-tight">
-            Monitor receivables, collection priorities, and customer payment behavior
+            {t("pages.customers.description")}
           </p>
         </div>
       </div>
@@ -35,14 +37,14 @@ export default function CustomersPage() {
       {!ownersLoading && (
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6 p-3 sm:p-4 bg-muted/30 rounded-lg w-full max-w-full overflow-x-hidden">
           <div>
-            <h3 className="font-medium text-sm sm:text-base">Customer Aging Dashboard Filter</h3>
+            <h3 className="font-medium text-sm sm:text-base">{t("pages.customers.filter_title")}</h3>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Filter all dashboard components by customer owner
+              {t("pages.customers.filter_description")}
             </p>
           </div>
           
           <div className="flex flex-col gap-2 w-full">
-            <span className="text-xs sm:text-sm text-muted-foreground font-medium">Customer Owner:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground font-medium">{t("pages.customers.customer_owner")}</span>
             <Select value={selectedOwner} onValueChange={setSelectedOwner}>
               <SelectTrigger className="w-full sm:w-[250px] min-h-[44px]">
                 <SelectValue />
@@ -81,7 +83,7 @@ export default function CustomersPage() {
       
       {/* Detailed Customer Aging Table */}
       <div className="w-full max-w-full overflow-x-hidden">
-        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 px-1">Detailed Customer Aging</h3>
+        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 px-1">{t("pages.customers.detailed_aging")}</h3>
         <CustomerAgingBalance selectedOwner={selectedOwner} />
       </div>
     </DashboardLayout>

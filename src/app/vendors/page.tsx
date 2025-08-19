@@ -6,15 +6,18 @@ import { VendorAgingBalance } from "@/components/vendors/vendor-aging-balance"
 import { VendorKPICards } from "@/components/vendors/vendor-kpi-cards"
 import { VendorPerformanceScorecard } from "@/components/vendors/vendor-performance-scorecard"
 import { VendorFinancialInsights } from "@/components/vendors/vendor-financial-insights"
+import { useLocale } from "@/i18n/locale-provider"
 
 export default function VendorsPage() {
+  const { t } = useLocale()
+  
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-4 mb-6 w-full max-w-full overflow-x-hidden">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Vendors</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight truncate">{t("pages.vendors.title")}</h2>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Monitor vendor relationships, aging balances, and payment performance
+            {t("pages.vendors.description")}
           </p>
         </div>
       </div>

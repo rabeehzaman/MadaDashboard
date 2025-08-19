@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { DynamicThemeColor } from "@/components/dynamic-theme-color";
+import { LocaleProvider } from "@/i18n/locale-provider";
+import { headers } from 'next/headers';
+import { getLangDir } from 'rtl-detect';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +16,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -36,13 +45,18 @@ export const viewport = {
   themeColor: "#FAF9F5",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get locale from middleware headers
+  const headersList = await headers();
+  const locale = headersList.get('x-locale') || 'en';
+  const direction = getLangDir(locale);
+  
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={direction} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon-180x180.png" />
@@ -73,18 +87,20 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <DynamicThemeColor />
-          {children}
-          <PWAInstallPrompt />
-        </ThemeProvider>
+        <LocaleProvider initialLocale={locale as 'en' | 'ar'}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <DynamicThemeColor />
+            {children}
+            <PWAInstallPrompt />
+          </ThemeProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

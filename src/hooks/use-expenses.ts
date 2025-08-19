@@ -29,8 +29,8 @@ export function useExpenses(branchFilter: BranchFilterValue = undefined, dateRan
           .select('*')
           .order('date', { ascending: false })
 
-        // Apply branch filter if provided
-        if (branchFilter) {
+        // Apply branch filter if provided (skip if "All" or undefined)
+        if (branchFilter && branchFilter !== "All") {
           query = query.eq('branch_name', branchFilter)
         }
 

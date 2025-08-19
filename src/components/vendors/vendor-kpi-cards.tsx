@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { useVendorKPIs } from "@/hooks/use-vendor-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { 
   FileText, 
   Clock, 
@@ -87,6 +88,7 @@ interface VendorKPICardsProps {
 }
 
 export function VendorKPICards({ className }: VendorKPICardsProps) {
+  const { t } = useLocale()
   const { data, loading, error } = useVendorKPIs()
 
   if (error) {
@@ -97,7 +99,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
             <CardContent className="p-6">
               <div className="text-center text-red-600">
                 <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-                <p className="text-sm">Failed to load KPIs</p>
+                <p className="text-sm">{t("vendors.messages.failed_to_load_kpis")}</p>
               </div>
             </CardContent>
           </Card>
@@ -110,7 +112,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
     <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full max-w-full overflow-x-hidden ${className || ''}`}>
       {/* Outstanding Bills */}
       <KPICard
-        title="Outstanding Bills"
+        title={t("vendors.kpi.outstanding_bills")}
         value={data ? data.outstanding_bills.toString() : "Loading..."}
         subtitle={data ? `Open: ${data.open_bills} | Overdue: ${data.overdue_bills}` : undefined}
         icon={FileText}
@@ -124,7 +126,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
 
       {/* Average Payment Days */}
       <KPICard
-        title="Avg Payment Days"
+        title={t("vendors.kpi.avg_payment_days")}
         value={data ? `${data.avg_payment_days.toFixed(1)}` : "Loading..."}
         subtitle="Days to payment completion"
         icon={Clock}
@@ -138,7 +140,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
 
       {/* Overdue Rate */}
       <KPICard
-        title="Overdue Rate"
+        title={t("vendors.kpi.overdue_rate")}
         value={data ? formatPercentage(data.overdue_percentage) : "Loading..."}
         subtitle={data ? `${data.overdue_bills} of ${data.total_bills} bills` : undefined}
         icon={AlertTriangle}
@@ -152,7 +154,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
 
       {/* Active Vendors */}
       <KPICard
-        title="Active Vendors"
+        title={t("vendors.kpi.active_vendors")}
         value={data ? data.active_vendors_this_month.toString() : "Loading..."}
         subtitle="This month"
         icon={Users}
@@ -166,7 +168,7 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
 
       {/* Payment Success Rate */}
       <KPICard
-        title="Payment Success"
+        title={t("vendors.kpi.payment_success")}
         value={data ? formatPercentage(data.payment_success_rate) : "Loading..."}
         subtitle={data ? `${data.paid_bills} paid bills` : undefined}
         icon={CheckCircle}

@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/lib/supabase"
 import { CustomerBalanceAging } from "@/types/database"
+import { useLocale } from "@/i18n/locale-provider"
 import { Search } from "lucide-react"
 
 const formatCurrency = (amount: number) => {
@@ -29,6 +30,7 @@ interface CustomerAgingBalanceProps {
 }
 
 export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBalanceProps) {
+  const { t } = useLocale()
   const [customerData, setCustomerData] = React.useState<CustomerBalanceAging[]>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
@@ -48,7 +50,7 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
 
         setCustomerData(data || [])
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch customer data')
+        setError(err instanceof Error ? err.message : t("pages.customers.error_loading_data"))
       } finally {
         setLoading(false)
       }
@@ -107,11 +109,11 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Customer Aging Balance</CardTitle>
-          <CardDescription>Loading customer data...</CardDescription>
+          <CardTitle>{t("pages.customers.detailed_aging")}</CardTitle>
+          <CardDescription>{t("pages.customers.loading_customer_data")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">Loading...</div>
+          <div className="text-center py-8">{t("common.loading")}</div>
         </CardContent>
       </Card>
     )
@@ -121,11 +123,11 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Customer Aging Balance</CardTitle>
-          <CardDescription>Error loading customer data</CardDescription>
+          <CardTitle>{t("pages.customers.detailed_aging")}</CardTitle>
+          <CardDescription>{t("pages.customers.error_loading_data")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-red-600">Error: {error}</div>
+          <div className="text-center py-8 text-red-600">{t("common.error")}: {error}</div>
         </CardContent>
       </Card>
     )
@@ -136,17 +138,17 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
       <CardHeader>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <CardTitle>Customer Aging Balance</CardTitle>
+            <CardTitle>{t("pages.customers.detailed_aging")}</CardTitle>
             <CardDescription>
-              Accounts receivable aging analysis by customer
+              {t("pages.customers.description")}
             </CardDescription>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-xs text-muted-foreground font-medium">Search Customers:</span>
+            <span className="text-xs text-muted-foreground font-medium">{t("common.search")} {t("nav.customers")}:</span>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by customer name..."
+                placeholder={t("pages.customers.search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 pl-10 min-h-[44px]"
@@ -160,24 +162,24 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
         <div className="md:hidden p-3 sm:p-4 w-full max-w-full">
           {filteredData.length > 0 && (
             <div className="p-3 sm:p-4 bg-orange-50 dark:bg-orange-950/50 border-b-2 border-orange-200 dark:border-orange-800 space-y-2 mb-4 rounded-t-md w-full">
-              <div className="font-bold text-sm text-orange-900 dark:text-orange-100">Summary Totals:</div>
+              <div className="font-bold text-sm text-orange-900 dark:text-orange-100">{t("pages.customers.summary_totals")}</div>
               <div className="grid grid-cols-2 gap-3 text-xs w-full">
                 <div>
-                  <div className="text-muted-foreground">Total Balance:</div>
+                  <div className="text-muted-foreground">{t("pages.customers.total_balance")}</div>
                   <div className="font-medium break-all">{formatCurrency(totals.totalBalance)}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground">Current (0-30):</div>
+                  <div className="text-muted-foreground">{t("pages.customers.current_0_30")}:</div>
                   <div className="font-medium break-all">{formatCurrency(totals.current0_30)}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground">Past Due (31-180):</div>
+                  <div className="text-muted-foreground">{t("pages.customers.past_due_31_180")}:</div>
                   <div className="font-medium text-orange-600 dark:text-orange-400 break-all">
                     {formatCurrency(totals.pastDue31_60 + totals.pastDue61_90 + totals.pastDue91_180)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground">High Risk (180+):</div>
+                  <div className="text-muted-foreground">{t("pages.customers.high_risk_180_plus")}:</div>
                   <div className="font-medium text-red-600 dark:text-red-400 break-all">{formatCurrency(totals.pastDueOver180)}</div>
                 </div>
               </div>
@@ -247,13 +249,13 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
             <TableHeader>
               <TableRow className="bg-orange-50 dark:bg-orange-950/70 border-b-2 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-950/90">
                 <TableHead className="min-w-12 font-bold text-orange-900 dark:text-orange-100 py-4">S/N</TableHead>
-                <TableHead className="min-w-48 font-bold text-orange-900 dark:text-orange-100 py-4">Customer Name</TableHead>
-                <TableHead className="text-right min-w-32 font-bold text-orange-900 dark:text-orange-100 py-4">Total Balance</TableHead>
-                <TableHead className="text-right min-w-28 font-bold text-orange-900 dark:text-orange-100 py-4">0-30 Days</TableHead>
-                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">31-60 Days</TableHead>
-                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">61-90 Days</TableHead>
-                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">91-180 Days</TableHead>
-                <TableHead className="text-right min-w-28 font-bold text-orange-900 dark:text-orange-100 py-4">180+ Days</TableHead>
+                <TableHead className="min-w-48 font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.customer_name")}</TableHead>
+                <TableHead className="text-right min-w-32 font-bold text-orange-900 dark:text-orange-100 py-4">{t("pages.customers.total_balance")}</TableHead>
+                <TableHead className="text-right min-w-28 font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.current_0_30")}</TableHead>
+                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.past_due_31_60")}</TableHead>
+                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.past_due_61_90")}</TableHead>
+                <TableHead className="text-right min-w-28 hidden lg:table-cell font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.past_due_91_180")}</TableHead>
+                <TableHead className="text-right min-w-28 font-bold text-orange-900 dark:text-orange-100 py-4">{t("customers.table_headers.high_risk_180")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -296,7 +298,7 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
               {filteredData.length > 0 && (
                 <TableRow className="border-t-2 border-border bg-muted/50 font-semibold hover:bg-muted/70">
                   <TableCell></TableCell>
-                  <TableCell className="font-bold text-foreground">Total</TableCell>
+                  <TableCell className="font-bold text-foreground">{t("common.total")}</TableCell>
                   <TableCell className="text-right font-bold text-foreground">
                     {formatCurrency(totals.totalBalance)}
                   </TableCell>
@@ -324,8 +326,8 @@ export function CustomerAgingBalance({ selectedOwner = "All" }: CustomerAgingBal
         {filteredData.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             {searchQuery.trim() 
-              ? `No customers found matching "${searchQuery.trim()}"${selectedOwner !== "All" ? ` for owner "${selectedOwner}"` : ""}.`
-              : `No customers found${selectedOwner !== "All" ? ` for the selected owner "${selectedOwner}"` : ""}.`
+              ? `${t("pages.customers.no_customers_search")} "${searchQuery.trim()}"${selectedOwner !== "All" ? ` ${t("pages.customers.for_owner")} "${selectedOwner}"` : ""}.`
+              : `${t("pages.customers.no_customers_found")}${selectedOwner !== "All" ? ` ${t("pages.customers.for_owner")} "${selectedOwner}"` : ""}.`
             }
           </div>
         )}
