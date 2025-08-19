@@ -8,6 +8,7 @@ import { TrendingUp, TrendingDown, DollarSign, Calculator, Receipt, Target } fro
 import { useOptimizedProfitByInvoice } from "@/hooks/use-optimized-data"
 import { useExpenses } from "@/hooks/use-expenses"
 import { formatCurrencyTable } from "@/lib/formatting"
+import { useLocale } from "@/i18n/locale-provider"
 import type { DateRange } from "@/components/dashboard/date-filter"
 
 interface StatementOfProfitAndLossProps {
@@ -26,6 +27,8 @@ interface ProfitAndLossData {
 }
 
 export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementOfProfitAndLossProps) {
+  const { t } = useLocale()
+  
   // Load all invoice data to calculate totals
   const {
     data: invoiceData,
@@ -70,10 +73,10 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Statement of Profit and Loss
+            {t("financials.profit_loss.title")}
           </CardTitle>
           <CardDescription>
-            Financial performance summary based on invoice data
+            {t("financials.profit_loss.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -102,12 +105,12 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Statement of Profit and Loss
+            {t("financials.profit_loss.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p className="text-red-500">Error loading financial data: {invoiceError || expensesError}</p>
+            <p className="text-red-500">{t("financials.profit_loss.error")} {invoiceError || expensesError}</p>
           </div>
         </CardContent>
       </Card>
@@ -121,13 +124,13 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-5 w-5" />
-          Statement of Profit and Loss
+          {t("financials.profit_loss.title")}
         </CardTitle>
         <CardDescription>
-          Financial performance summary based on {invoiceData.length} invoices and {expensesData?.length || 0} expenses
+          {t("financials.profit_loss.description")} - {invoiceData.length} {t("financials.profit_loss.invoices_and")} {expensesData?.length || 0} {t("financials.profit_loss.expenses_count")}
           <div className="flex items-center gap-2 mt-2 text-xs">
             <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span>Data sourced from profit by invoice analysis and expenses</span>
+            <span>{t("financials.profit_loss.sourced_from")}</span>
           </div>
         </CardDescription>
       </CardHeader>
@@ -138,17 +141,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Total Sales</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.total_sales")}</p>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{formatCurrencyTable(totalSales)}</p>
                 <Badge variant="default" className="text-xs">
-                  Revenue
+                  {t("financials.profit_loss.revenue")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Total sales from all invoices
+                {t("financials.profit_loss.total_sales_description")}
               </p>
             </CardContent>
           </Card>
@@ -157,17 +160,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Cost of Goods Sold</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.cost_of_goods_sold")}</p>
                 <TrendingDown className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{formatCurrencyTable(costOfGoodsSold)}</p>
                 <Badge variant="destructive" className="text-xs">
-                  COGS
+                  {t("financials.profit_loss.cogs")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Total cost from all invoices
+                {t("financials.profit_loss.total_cost_description")}
               </p>
             </CardContent>
           </Card>
@@ -176,17 +179,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Gross Profit</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.gross_profit")}</p>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{formatCurrencyTable(grossProfit)}</p>
                 <Badge variant={grossProfit >= 0 ? "default" : "destructive"} className="text-xs">
-                  {grossProfit >= 0 ? "Profit" : "Loss"}
+                  {grossProfit >= 0 ? t("financials.profit_loss.profit") : t("financials.profit_loss.loss")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Sales minus cost of goods
+                {t("financials.profit_loss.gross_profit_description")}
               </p>
             </CardContent>
           </Card>
@@ -195,17 +198,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Gross Profit Margin</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.gross_profit_margin")}</p>
                 <Calculator className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{grossProfitMargin.toFixed(1)}%</p>
                 <Badge variant={grossProfitMargin >= 0 ? "default" : "destructive"} className="text-xs">
-                  {grossProfitMargin >= 0 ? "Positive" : "Negative"}
+                  {grossProfitMargin >= 0 ? t("financials.profit_loss.positive") : t("financials.profit_loss.negative")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Profit as % of sales
+                {t("financials.profit_loss.profit_percentage_description")}
               </p>
             </CardContent>
           </Card>
@@ -214,17 +217,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Total Expenses</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.total_expenses")}</p>
                 <Receipt className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{formatCurrencyTable(totalExpenses)}</p>
                 <Badge variant="secondary" className="text-xs">
-                  Operating
+                  {t("financials.profit_loss.operating")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Total operating expenses
+                {t("financials.profit_loss.total_expenses_description")}
               </p>
             </CardContent>
           </Card>
@@ -233,17 +236,17 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
           <Card className="w-full max-w-full">
             <CardContent className="p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
               <div className="flex items-center justify-between space-y-0 pb-2">
-                <p className="text-sm font-medium text-muted-foreground">Net Profit</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("financials.profit_loss.net_profit")}</p>
                 <Target className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center space-x-2">
                 <p className="text-xl sm:text-2xl font-bold break-all">{formatCurrencyTable(netProfit)}</p>
                 <Badge variant={netProfit >= 0 ? "default" : "destructive"} className="text-xs">
-                  {netProfit >= 0 ? "Profit" : "Loss"}
+                  {netProfit >= 0 ? t("financials.profit_loss.profit") : t("financials.profit_loss.loss")}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Final bottom line profit
+                {t("financials.profit_loss.net_profit_description")}
               </p>
             </CardContent>
           </Card>
@@ -252,42 +255,42 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
         {/* Detailed Statement */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Profit & Loss Statement</CardTitle>
-            <CardDescription>Detailed breakdown of financial performance</CardDescription>
+            <CardTitle className="text-lg">{t("financials.profit_loss.statement_title")}</CardTitle>
+            <CardDescription>{t("financials.profit_loss.statement_description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {/* Revenue Section */}
               <div className="flex justify-between items-center py-3 border-b">
-                <div className="font-semibold text-lg">Revenue</div>
+                <div className="font-semibold text-lg">{t("financials.profit_loss.revenue")}</div>
                 <div></div>
               </div>
               <div className="flex justify-between items-center pl-4">
-                <div className="text-muted-foreground">Total Sales</div>
+                <div className="text-muted-foreground">{t("financials.profit_loss.total_sales")}</div>
                 <div className="font-medium">{formatCurrencyTable(totalSales)}</div>
               </div>
               <div className="flex justify-between items-center font-semibold border-b pb-3">
-                <div>Total Revenue</div>
+                <div>{t("financials.profit_loss.total_revenue")}</div>
                 <div>{formatCurrencyTable(totalSales)}</div>
               </div>
 
               {/* Cost Section */}
               <div className="flex justify-between items-center py-3 border-b">
-                <div className="font-semibold text-lg">Cost of Sales</div>
+                <div className="font-semibold text-lg">{t("financials.profit_loss.cost_of_sales")}</div>
                 <div></div>
               </div>
               <div className="flex justify-between items-center pl-4">
-                <div className="text-muted-foreground">Cost of Goods Sold</div>
+                <div className="text-muted-foreground">{t("financials.profit_loss.cost_of_goods_sold")}</div>
                 <div className="font-medium">({formatCurrencyTable(costOfGoodsSold)})</div>
               </div>
               <div className="flex justify-between items-center font-semibold border-b pb-3">
-                <div>Total Cost of Sales</div>
+                <div>{t("financials.profit_loss.total_cost_of_sales")}</div>
                 <div>({formatCurrencyTable(costOfGoodsSold)})</div>
               </div>
 
               {/* Gross Profit Section */}
               <div className="flex justify-between items-center py-4 bg-muted/50 px-4 rounded-lg">
-                <div className="font-bold text-lg">Gross Profit</div>
+                <div className="font-bold text-lg">{t("financials.profit_loss.gross_profit")}</div>
                 <div className="font-bold text-lg">
                   <Badge variant={grossProfit >= 0 ? "default" : "destructive"} className="text-base px-3 py-1">
                     {formatCurrencyTable(grossProfit)}
@@ -297,7 +300,7 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
 
               {/* Margin Analysis */}
               <div className="flex justify-between items-center py-3 bg-primary/5 px-4 rounded-lg">
-                <div className="font-semibold">Gross Profit Margin</div>
+                <div className="font-semibold">{t("financials.profit_loss.gross_profit_margin")}</div>
                 <div className="font-semibold">
                   <Badge variant={grossProfitMargin >= 0 ? "default" : "destructive"} className="text-base px-3 py-1">
                     {grossProfitMargin.toFixed(2)}%
@@ -307,7 +310,7 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
 
               {/* Operating Expenses Section */}
               <div className="flex justify-between items-center py-3 border-b">
-                <div className="font-semibold text-lg">Operating Expenses</div>
+                <div className="font-semibold text-lg">{t("financials.profit_loss.operating_expenses")}</div>
                 <div></div>
               </div>
               
@@ -360,7 +363,7 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
                   {expensesData.length > 10 && (
                     <div className="flex justify-between items-center pt-2 border-t border-dashed">
                       <div className="text-xs text-muted-foreground italic">
-                        +{expensesData.length - 10} more expenses
+                        +{expensesData.length - 10} {t("financials.profit_loss.more_expenses")}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {formatCurrencyTable(
@@ -373,13 +376,13 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
               )}
               
               <div className="flex justify-between items-center font-semibold border-b pb-3">
-                <div>Total Operating Expenses</div>
+                <div>{t("financials.profit_loss.total_operating_expenses")}</div>
                 <div>({formatCurrencyTable(totalExpenses)})</div>
               </div>
 
               {/* Net Profit Section */}
               <div className="flex justify-between items-center py-4 bg-green-50 dark:bg-green-950/30 px-4 rounded-lg border border-green-200 dark:border-green-800">
-                <div className="font-bold text-lg text-green-800 dark:text-green-200">Net Profit</div>
+                <div className="font-bold text-lg text-green-800 dark:text-green-200">{t("financials.profit_loss.net_profit")}</div>
                 <div className="font-bold text-lg">
                   <Badge variant={netProfit >= 0 ? "default" : "destructive"} className="text-base px-3 py-1">
                     {formatCurrencyTable(netProfit)}
@@ -389,7 +392,7 @@ export function StatementOfProfitAndLoss({ dateRange, branchFilter }: StatementO
 
               {/* Net Profit Margin Analysis */}
               <div className="flex justify-between items-center py-3 bg-blue-50 dark:bg-blue-950/30 px-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <div className="font-semibold text-blue-800 dark:text-blue-200">Net Profit Margin</div>
+                <div className="font-semibold text-blue-800 dark:text-blue-200">{t("financials.profit_loss.net_profit_margin")}</div>
                 <div className="font-semibold">
                   <Badge variant={netProfitMargin >= 0 ? "default" : "destructive"} className="text-base px-3 py-1">
                     {netProfitMargin.toFixed(2)}%

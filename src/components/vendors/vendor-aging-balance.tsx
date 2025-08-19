@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/lib/supabase"
+import { useLocale } from "@/i18n/locale-provider"
 import { AlertTriangle, DollarSign, Clock, Target, TrendingUp, Search } from "lucide-react"
 
 const formatCurrency = (amount: number) => {
@@ -76,6 +77,7 @@ interface VendorAgingData {
 }
 
 export function VendorAgingBalance() {
+  const { t } = useLocale()
   const [selectedRisk, setSelectedRisk] = React.useState<string>("All")
   const [searchQuery, setSearchQuery] = React.useState<string>("")
   const [vendorData, setVendorData] = React.useState<VendorAgingData[]>([])
@@ -309,9 +311,9 @@ export function VendorAgingBalance() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-orange-600" />
-            Vendor Aging Balance
+            {t("vendors.aging.title")}
           </CardTitle>
-          <CardDescription>Loading aging analysis...</CardDescription>
+          <CardDescription>{t("vendors.aging.loading_aging_analysis")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -329,14 +331,14 @@ export function VendorAgingBalance() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />
-            Vendor Aging Balance
+            {t("vendors.aging.title")}
           </CardTitle>
-          <CardDescription>Error loading aging data</CardDescription>
+          <CardDescription>{t("vendors.aging.error_loading_aging")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-red-600">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">Error: {error}</p>
+            <p className="text-sm">{t("common.error")}: {error}</p>
           </div>
         </CardContent>
       </Card>
@@ -350,19 +352,19 @@ export function VendorAgingBalance() {
           <div className="flex-1 min-w-0">
             <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
               <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-orange-600 dark:text-orange-400" />
-              <span className="truncate">Vendor Aging Balance</span>
+              <span className="truncate">{t("vendors.aging.title")}</span>
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Outstanding balance analysis by aging periods using actual vendor balances
+              {t("vendors.aging.description")}
             </CardDescription>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="flex flex-col gap-2">
-              <span className="text-xs text-muted-foreground font-medium">Search Vendors:</span>
+              <span className="text-xs text-muted-foreground font-medium">{t("vendors.aging.search_vendors")}</span>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by vendor name..."
+                  placeholder={t("vendors.aging.search_placeholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full sm:w-64 pl-10 min-h-[44px]"
@@ -370,7 +372,7 @@ export function VendorAgingBalance() {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-xs text-muted-foreground font-medium">Filter by Risk:</span>
+              <span className="text-xs text-muted-foreground font-medium">{t("vendors.aging.filter_by_risk")}</span>
               <Select value={selectedRisk} onValueChange={setSelectedRisk}>
                 <SelectTrigger className="w-full sm:w-40 min-h-[44px]">
                   <SelectValue />
@@ -378,14 +380,18 @@ export function VendorAgingBalance() {
                 <SelectContent>
                   {riskCategories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category}
+                      {category === "All" ? t("vendors.risk_levels.all") : 
+                       category === "Critical" ? t("vendors.risk_levels.critical") :
+                       category === "High" ? t("vendors.risk_levels.high") :
+                       category === "Medium" ? t("vendors.risk_levels.medium") :
+                       category === "Low" ? t("vendors.risk_levels.low") : category}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <Badge variant="outline" className="self-start sm:self-auto bg-orange-600 text-white dark:bg-orange-700 border-orange-600 dark:border-orange-700">
-              {totals.vendors_count} vendors
+              {totals.vendors_count} {t("vendors.aging.vendors")}
             </Badge>
           </div>
         </div>
@@ -395,19 +401,19 @@ export function VendorAgingBalance() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-full overflow-x-hidden">
           <div className="p-3 sm:p-4 rounded-lg w-full max-w-full overflow-x-hidden bg-orange-600 text-white dark:bg-orange-700">
             <div className="text-lg sm:text-2xl font-bold break-all">{formatCurrency(totals.total_outstanding)}</div>
-            <div className="text-xs sm:text-sm opacity-90">Total Outstanding</div>
+            <div className="text-xs sm:text-sm opacity-90">{t("vendors.aging.total_outstanding")}</div>
           </div>
           <div className="p-3 sm:p-4 rounded-lg w-full max-w-full overflow-x-hidden bg-green-600 text-white dark:bg-green-700">
             <div className="text-lg sm:text-2xl font-bold break-all">{formatCurrency(totals.current_0_30)}</div>
-            <div className="text-xs sm:text-sm opacity-90">Current (0-30 days)</div>
+            <div className="text-xs sm:text-sm opacity-90">{t("vendors.aging.current_0_30")}</div>
           </div>
           <div className="p-3 sm:p-4 rounded-lg w-full max-w-full overflow-x-hidden bg-yellow-600 text-white dark:bg-yellow-700">
             <div className="text-lg sm:text-2xl font-bold break-all">{formatCurrency(totals.days_31_60 + totals.days_61_90)}</div>
-            <div className="text-xs sm:text-sm opacity-90">31-90 days</div>
+            <div className="text-xs sm:text-sm opacity-90">{t("vendors.aging.days_31_60")}</div>
           </div>
           <div className="p-3 sm:p-4 rounded-lg w-full max-w-full overflow-x-hidden bg-red-600 text-white dark:bg-red-700">
             <div className="text-lg sm:text-2xl font-bold break-all">{formatCurrency(totals.over_90)}</div>
-            <div className="text-xs sm:text-sm opacity-90">Over 90 days</div>
+            <div className="text-xs sm:text-sm opacity-90">{t("vendors.aging.over_90")}</div>
           </div>
         </div>
 
@@ -435,34 +441,34 @@ export function VendorAgingBalance() {
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         <span className="font-medium">
-                          {vendor.avg_payment_days > 0 ? `${vendor.avg_payment_days} days avg` : 'No payment data'}
+                          {vendor.avg_payment_days > 0 ? `${vendor.avg_payment_days} ${t("pages.vendors.days_avg")}` : t("pages.vendors.no_payment_data")}
                         </span>
                       </div>
-                      <div>Last Bill: <span className="font-medium text-blue-600 dark:text-blue-400">{vendor.last_bill_date}</span></div>
-                      <div>Last Pay: <span className="font-medium text-green-600 dark:text-green-400">{vendor.last_payment_date}</span></div>
+                      <div>{t("vendors.aging.last_bill")}: <span className="font-medium text-blue-600 dark:text-blue-400">{vendor.last_bill_date}</span></div>
+                      <div>{t("vendors.aging.last_pay")}: <span className="font-medium text-green-600 dark:text-green-400">{vendor.last_payment_date}</span></div>
                     </div>
                     <div className="text-right flex-shrink-0 ml-3">
                       <div className="font-bold text-lg">{formatCurrency(vendor.total_outstanding)}</div>
-                      <div className="text-xs text-muted-foreground">Total Outstanding</div>
+                      <div className="text-xs text-muted-foreground">{t("vendors.aging.total_outstanding")}</div>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <div className="text-muted-foreground">Current (0-30):</div>
+                    <div className="text-muted-foreground">{t("vendors.aging.current_0_30")}:</div>
                     <div className="font-medium">{formatCurrency(vendor.current_0_30)}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">31-60 Days:</div>
+                    <div className="text-muted-foreground">{t("vendors.aging.days_31_60")}:</div>
                     <div className="font-medium">{formatCurrency(vendor.days_31_60)}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">61-90 Days:</div>
+                    <div className="text-muted-foreground">{t("vendors.aging.days_61_90")}:</div>
                     <div className="font-medium">{formatCurrency(vendor.days_61_90)}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Over 90 Days:</div>
+                    <div className="text-muted-foreground">{t("vendors.aging.over_90")}:</div>
                     <div className="font-medium text-red-600 dark:text-red-400">{formatCurrency(vendor.over_90)}</div>
                   </div>
                 </div>
@@ -476,13 +482,13 @@ export function VendorAgingBalance() {
           <Table>
             <TableHeader>
               <TableRow className="bg-orange-50 dark:bg-orange-900/40 border-b dark:border-gray-700">
-                <TableHead className="font-semibold text-foreground">Vendor Details</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Total Outstanding</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Current (0-30)</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">31-60 Days</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">61-90 Days</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Over 90 Days</TableHead>
-                <TableHead className="text-center font-semibold text-foreground">Risk Level</TableHead>
+                <TableHead className="font-semibold text-foreground">{t("vendors.aging.vendor_details")}</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">{t("vendors.aging.total_outstanding")}</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">{t("vendors.aging.current_0_30")}</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">{t("vendors.aging.days_31_60")}</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">{t("vendors.aging.days_61_90")}</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">{t("vendors.aging.over_90")}</TableHead>
+                <TableHead className="text-center font-semibold text-foreground">{t("vendors.aging.risk_level")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -493,14 +499,14 @@ export function VendorAgingBalance() {
                       <div className="font-semibold text-foreground">{vendor.vendor_name}</div>
                       <div className="text-sm text-muted-foreground flex items-center gap-2 mb-1">
                         <Clock className="h-3 w-3" />
-                        {vendor.avg_payment_days > 0 ? `${vendor.avg_payment_days} days avg` : 'No payment data'}
+                        {vendor.avg_payment_days > 0 ? `${vendor.avg_payment_days} ${t("pages.vendors.days_avg")}` : t("pages.vendors.no_payment_data")}
                       </div>
                       <div className="text-xs space-y-0.5">
                         <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                          <span className="font-medium">Last Bill:</span> {vendor.last_bill_date}
+                          <span className="font-medium">{t("vendors.aging.last_bill")}:</span> {vendor.last_bill_date}
                         </div>
                         <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                          <span className="font-medium">Last Pay:</span> {vendor.last_payment_date}
+                          <span className="font-medium">{t("vendors.aging.last_pay")}:</span> {vendor.last_payment_date}
                         </div>
                       </div>
                     </div>

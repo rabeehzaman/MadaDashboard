@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useVendorFinancialInsights } from "@/hooks/use-vendor-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { 
   DollarSign, 
   TrendingUp, 
@@ -59,6 +60,7 @@ interface VendorFinancialInsightsProps {
 }
 
 export function VendorFinancialInsights({ className }: VendorFinancialInsightsProps) {
+  const { t } = useLocale()
   const { data, loading, error } = useVendorFinancialInsights()
 
   if (loading) {
@@ -67,9 +69,9 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-green-600" />
-            Vendor Financial Insights
+            {t("vendors.financial_insights.title")}
           </CardTitle>
-          <CardDescription>Loading financial data...</CardDescription>
+          <CardDescription>{t("vendors.financial_insights.loading_financial_data")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -96,14 +98,14 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />
-            Vendor Financial Insights
+            {t("vendors.financial_insights.title")}
           </CardTitle>
-          <CardDescription>Error loading financial data</CardDescription>
+          <CardDescription>{t("vendors.financial_insights.error_loading_financial")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-red-600">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">Error: {error}</p>
+            <p className="text-sm">{t("common.error")}: {error}</p>
           </div>
         </CardContent>
       </Card>
@@ -116,14 +118,14 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-green-600" />
-            Vendor Financial Insights
+            {t("vendors.financial_insights.title")}
           </CardTitle>
-          <CardDescription>No financial data available</CardDescription>
+          <CardDescription>{t("common.no_data_available")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
             <Activity className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">No vendor financial data found</p>
+            <p className="text-sm">{t("vendors.financial_insights.no_financial_data")}</p>
           </div>
         </CardContent>
       </Card>
@@ -137,14 +139,14 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
           <div className="flex-1 min-w-0">
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600 flex-shrink-0" />
-              <span className="truncate">Vendor Financial Insights</span>
+              <span className="truncate">{t("vendors.financial_insights.title")}</span>
             </CardTitle>
             <CardDescription className="text-sm">
-              Cash flow intelligence: actual spending, payments, and outstanding balances (excl. opening balance)
+              {t("vendors.financial_insights.description")}
             </CardDescription>
           </div>
           <Badge variant="secondary" className="self-start sm:self-auto">
-            {data.length} vendors
+            {data.length} {t("vendors.aging.vendors")}
           </Badge>
         </div>
       </CardHeader>
@@ -158,11 +160,11 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-base truncate">{vendor.vendor_name}</div>
                     <div className="text-xs text-muted-foreground">
-                      Last Bill: {vendor.last_bill_date ? new Date(vendor.last_bill_date).toLocaleDateString() : 'N/A'}
+                      {t("vendors.aging.last_bill")}: {vendor.last_bill_date ? new Date(vendor.last_bill_date).toLocaleDateString() : 'N/A'}
                     </div>
                     {vendor.last_payment_date && (
                       <div className="text-xs text-green-600">
-                        Last Pay: {new Date(vendor.last_payment_date).toLocaleDateString()}
+                        {t("vendors.aging.last_pay")}: {new Date(vendor.last_payment_date).toLocaleDateString()}
                       </div>
                     )}
                   </div>
@@ -176,35 +178,35 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                 
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <div className="text-muted-foreground">YTD Billed:</div>
+                    <div className="text-muted-foreground">{t("vendors.financial_insights.ytd_billed")}:</div>
                     <div className="font-medium break-all">{formatCurrency(vendor.total_spend_ytd)}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">YTD Paid:</div>
+                    <div className="text-muted-foreground">{t("vendors.financial_insights.ytd_paid")}:</div>
                     <div className="font-medium text-green-600 break-all">
                       {vendor.total_paid_ytd ? formatCurrency(vendor.total_paid_ytd) : 'SAR 0'}
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Outstanding:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.outstanding")}:</div>
                     <div className={`font-medium break-all ${(vendor.outstanding_amount || 0) > 50000 ? 'text-red-600' : (vendor.outstanding_amount || 0) > 10000 ? 'text-orange-600' : 'text-green-600'}`}>
                       {vendor.outstanding_amount ? formatCurrency(vendor.outstanding_amount) : 'SAR 0'}
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Pay Rate:</div>
+                    <div className="text-muted-foreground">{t("vendors.financial_insights.pay_rate")}:</div>
                     <div className={`font-medium ${(vendor.payment_completion_rate || 0) > 95 ? 'text-green-600' : (vendor.payment_completion_rate || 0) > 80 ? 'text-yellow-600' : 'text-red-600'}`}>
                       {vendor.payment_completion_rate ? `${vendor.payment_completion_rate.toFixed(1)}%` : '0%'}
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Cash Days:</div>
+                    <div className="text-muted-foreground">{t("vendors.financial_insights.cash_days")}:</div>
                     <div className={`font-medium ${(vendor.cash_conversion_days || 999) > 60 ? 'text-red-600' : (vendor.cash_conversion_days || 999) > 30 ? 'text-yellow-600' : 'text-green-600'}`}>
                       {vendor.cash_conversion_days ? `${vendor.cash_conversion_days}d` : 'N/A'}
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Velocity:</div>
+                    <div className="text-muted-foreground">{t("vendors.financial_insights.velocity")}:</div>
                     <div className={`font-medium ${(vendor.payment_velocity || 0) > 2 ? 'text-green-600' : (vendor.payment_velocity || 0) > 1 ? 'text-yellow-600' : 'text-red-600'}`}>
                       {vendor.payment_velocity ? `${vendor.payment_velocity.toFixed(1)}/mo` : '0/mo'}
                     </div>
@@ -217,7 +219,7 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                     <span>{vendor.payment_trend.replace(/[⬇️⬆️➡️]/g, '').trim()}</span>
                   </div>
                   <div>
-                    {vendor.bills_with_payments || 0} of {vendor.total_bills || 0} bills paid
+                    {vendor.bills_with_payments || 0} {t("vendors.financial_insights.of")} {vendor.total_bills || 0} {t("vendors.financial_insights.bills_paid")}
                   </div>
                 </div>
               </div>
@@ -230,14 +232,14 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[180px]">Vendor</TableHead>
-                <TableHead className="text-right w-[90px]">YTD Billed</TableHead>
-                <TableHead className="text-right w-[90px]">YTD Paid</TableHead>
-                <TableHead className="text-right w-[90px]">Outstanding</TableHead>
-                <TableHead className="text-center w-[70px]">Pay Rate</TableHead>
-                <TableHead className="text-center w-[80px]">Cash Days</TableHead>
-                <TableHead className="text-center w-[80px]">Velocity</TableHead>
-                <TableHead className="text-center w-[100px]">Status</TableHead>
+                <TableHead className="w-[180px]">{t("vendors.performance.vendor")}</TableHead>
+                <TableHead className="text-right w-[90px]">{t("vendors.financial_insights.ytd_billed")}</TableHead>
+                <TableHead className="text-right w-[90px]">{t("vendors.financial_insights.ytd_paid")}</TableHead>
+                <TableHead className="text-right w-[90px]">{t("vendors.performance.outstanding")}</TableHead>
+                <TableHead className="text-center w-[70px]">{t("vendors.financial_insights.pay_rate")}</TableHead>
+                <TableHead className="text-center w-[80px]">{t("vendors.financial_insights.cash_days")}</TableHead>
+                <TableHead className="text-center w-[80px]">{t("vendors.financial_insights.velocity")}</TableHead>
+                <TableHead className="text-center w-[100px]">{t("vendors.performance.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -249,13 +251,13 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                         {vendor.vendor_name}
                       </div>
                       <div className="text-xs text-muted-foreground flex items-center gap-2">
-                        <span>Last Bill: {vendor.last_bill_date ? new Date(vendor.last_bill_date).toLocaleDateString() : 'N/A'}</span>
+                        <span>{t("vendors.aging.last_bill")}: {vendor.last_bill_date ? new Date(vendor.last_bill_date).toLocaleDateString() : 'N/A'}</span>
                         {vendor.last_payment_date && (
-                          <span className="text-green-600">• Last Pay: {new Date(vendor.last_payment_date).toLocaleDateString()}</span>
+                          <span className="text-green-600">• {t("vendors.aging.last_pay")}: {new Date(vendor.last_payment_date).toLocaleDateString()}</span>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {vendor.bills_with_payments || 0} of {vendor.total_bills || 0} bills paid
+                        {vendor.bills_with_payments || 0} {t("vendors.financial_insights.of")} {vendor.total_bills || 0} {t("vendors.financial_insights.bills_paid")}
                       </div>
                     </div>
                   </TableCell>
@@ -264,7 +266,7 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                       {formatCurrency(vendor.total_spend_ytd)}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {formatCurrency(vendor.avg_order_value)} avg
+                      {formatCurrency(vendor.avg_order_value)} {t("vendors.financial_insights.avg")}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
@@ -280,7 +282,7 @@ export function VendorFinancialInsights({ className }: VendorFinancialInsightsPr
                       {vendor.outstanding_amount ? formatCurrency(vendor.outstanding_amount) : 'SAR 0'}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {vendor.days_since_last_payment ? `${vendor.days_since_last_payment}d ago` : 'No payments'}
+                      {vendor.days_since_last_payment ? `${vendor.days_since_last_payment}d ${t("vendors.financial_insights.ago")}` : t("vendors.financial_insights.no_payments")}
                     </div>
                   </TableCell>
                   <TableCell className="text-center">

@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useVendorPerformanceScorecard } from "@/hooks/use-vendor-kpis"
+import { useLocale } from "@/i18n/locale-provider"
 import { AlertTriangle, TrendingUp, Users, CreditCard, Target } from "lucide-react"
 
 const getScoreColor = (score: number) => {
@@ -34,6 +35,7 @@ interface VendorPerformanceScorecardProps {
 }
 
 export function VendorPerformanceScorecard({ className }: VendorPerformanceScorecardProps) {
+  const { t } = useLocale()
   const { data, loading, error } = useVendorPerformanceScorecard()
 
   if (loading) {
@@ -42,9 +44,9 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-blue-600" />
-            Vendor Performance Scorecard
+            {t("vendors.performance.title")}
           </CardTitle>
-          <CardDescription>Loading vendor performance data...</CardDescription>
+          <CardDescription>{t("vendors.performance.loading_performance_data")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -70,14 +72,14 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />
-            Vendor Performance Scorecard
+            {t("vendors.performance.title")}
           </CardTitle>
-          <CardDescription>Error loading performance data</CardDescription>
+          <CardDescription>{t("vendors.performance.error_loading_performance")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-red-600">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">Error: {error}</p>
+            <p className="text-sm">{t("common.error")}: {error}</p>
           </div>
         </CardContent>
       </Card>
@@ -90,14 +92,14 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-blue-600" />
-            Vendor Performance Scorecard
+            {t("vendors.performance.title")}
           </CardTitle>
-          <CardDescription>No performance data available</CardDescription>
+          <CardDescription>{t("vendors.performance.no_performance_data")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
             <Users className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">No vendor performance data found</p>
+            <p className="text-sm">{t("vendors.performance.no_vendor_performance_found")}</p>
           </div>
         </CardContent>
       </Card>
@@ -111,14 +113,14 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
           <div className="flex-1 min-w-0">
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-blue-600 flex-shrink-0" />
-              <span className="truncate">Vendor Performance Scorecard</span>
+              <span className="truncate">{t("vendors.performance.title")}</span>
             </CardTitle>
             <CardDescription className="text-sm">
-              Top performing vendors by business impact, payment reliability, and cash conversion (excl. opening balance)
+              {t("vendors.performance.description")}
             </CardDescription>
           </div>
           <Badge variant="secondary" className="self-start sm:self-auto">
-            {data.length} vendors
+            {data.length} {t("vendors.aging.vendors")}
           </Badge>
         </div>
       </CardHeader>
@@ -138,7 +140,7 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
                       <div className={`text-2xl font-bold ${getScoreColor(vendor.performance_score)}`}>
                         {vendor.performance_score}
                       </div>
-                      <div className="text-xs text-muted-foreground">Score</div>
+                      <div className="text-xs text-muted-foreground">{t("vendors.performance.score")}</div>
                     </div>
                     <Badge variant={getScoreBadgeVariant(vendor.vendor_status)} className="text-xs">
                       {vendor.vendor_status}
@@ -148,35 +150,35 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
                 
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <div className="text-muted-foreground">Bills:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.bills")}:</div>
                     <div className="font-medium">{vendor.total_bills}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Pay Days:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.pay_days")}:</div>
                     <div className={`font-medium ${vendor.avg_payment_days > 60 ? 'text-red-600' : vendor.avg_payment_days > 30 ? 'text-yellow-600' : 'text-green-600'}`}>
                       {vendor.avg_payment_days}d
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Overdue:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.overdue")}:</div>
                     <div className={`font-medium ${vendor.overdue_percentage > 15 ? 'text-red-600' : vendor.overdue_percentage > 10 ? 'text-yellow-600' : 'text-green-600'}`}>
                       {vendor.overdue_percentage}%
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Business:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.business")}:</div>
                     <div className={`font-medium ${vendor.business_percentage > 10 ? 'text-blue-600 font-semibold' : ''}`}>
                       {vendor.business_percentage}%
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Pay Rate:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.pay_rate")}:</div>
                     <div className={`font-medium ${vendor.payment_success_rate > 95 ? 'text-green-600' : vendor.payment_success_rate > 85 ? 'text-yellow-600' : 'text-red-600'}`}>
                       {vendor.payment_success_rate}%
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground">Outstanding:</div>
+                    <div className="text-muted-foreground">{t("vendors.performance.outstanding")}:</div>
                     <div className="font-medium text-red-600 break-all">
                       {vendor.outstanding_amount ? `SAR ${Math.round(vendor.outstanding_amount).toLocaleString()}` : 'N/A'}
                     </div>
@@ -192,15 +194,15 @@ export function VendorPerformanceScorecard({ className }: VendorPerformanceScore
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[180px]">Vendor</TableHead>
-                <TableHead className="text-center w-[70px]">Score</TableHead>
-                <TableHead className="text-right w-[70px]">Bills</TableHead>
-                <TableHead className="text-right w-[80px]">Pay Days</TableHead>
-                <TableHead className="text-right w-[80px]">Overdue %</TableHead>
-                <TableHead className="text-right w-[80px]">Business %</TableHead>
-                <TableHead className="text-right w-[80px]">Pay Rate</TableHead>
-                <TableHead className="text-right w-[90px]">Outstanding</TableHead>
-                <TableHead className="text-center w-[100px]">Status</TableHead>
+                <TableHead className="w-[180px]">{t("vendors.performance.vendor")}</TableHead>
+                <TableHead className="text-center w-[70px]">{t("vendors.performance.score")}</TableHead>
+                <TableHead className="text-right w-[70px]">{t("vendors.performance.bills")}</TableHead>
+                <TableHead className="text-right w-[80px]">{t("vendors.performance.pay_days")}</TableHead>
+                <TableHead className="text-right w-[80px]">{t("vendors.performance.overdue")} %</TableHead>
+                <TableHead className="text-right w-[80px]">{t("vendors.performance.business")} %</TableHead>
+                <TableHead className="text-right w-[80px]">{t("vendors.performance.pay_rate")}</TableHead>
+                <TableHead className="text-right w-[90px]">{t("vendors.performance.outstanding")}</TableHead>
+                <TableHead className="text-center w-[100px]">{t("vendors.performance.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

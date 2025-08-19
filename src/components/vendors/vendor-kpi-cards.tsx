@@ -114,10 +114,10 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
       <KPICard
         title={t("vendors.kpi.outstanding_bills")}
         value={data ? data.outstanding_bills.toString() : "Loading..."}
-        subtitle={data ? `Open: ${data.open_bills} | Overdue: ${data.overdue_bills}` : undefined}
+        subtitle={data ? `${t("vendors.kpi.open")}: ${data.open_bills} | ${t("vendors.kpi.overdue")}: ${data.overdue_bills}` : undefined}
         icon={FileText}
         badge={data && data.overdue_bills > 0 ? {
-          text: data.overdue_bills > 100 ? "High Risk" : "Monitor",
+          text: data.overdue_bills > 100 ? t("vendors.status_badges.high_risk") : t("vendors.status_badges.monitor"),
           variant: data.overdue_bills > 100 ? "destructive" : "outline"
         } : undefined}
         loading={loading}
@@ -128,10 +128,10 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
       <KPICard
         title={t("vendors.kpi.avg_payment_days")}
         value={data ? `${data.avg_payment_days.toFixed(1)}` : "Loading..."}
-        subtitle="Days to payment completion"
+        subtitle={t("vendors.kpi.days_to_payment")}
         icon={Clock}
         badge={data ? {
-          text: data.avg_payment_days > 200 ? "Slow" : data.avg_payment_days > 150 ? "Average" : "Good",
+          text: data.avg_payment_days > 200 ? t("vendors.status_badges.slow") : data.avg_payment_days > 150 ? t("vendors.status_badges.average") : t("vendors.status_badges.good"),
           variant: data.avg_payment_days > 200 ? "destructive" : data.avg_payment_days > 150 ? "outline" : "default"
         } : undefined}
         loading={loading}
@@ -142,10 +142,10 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
       <KPICard
         title={t("vendors.kpi.overdue_rate")}
         value={data ? formatPercentage(data.overdue_percentage) : "Loading..."}
-        subtitle={data ? `${data.overdue_bills} of ${data.total_bills} bills` : undefined}
+        subtitle={data ? `${data.overdue_bills} of ${data.total_bills} ${t("vendors.performance.bills").toLowerCase()}` : undefined}
         icon={AlertTriangle}
         badge={data ? {
-          text: data.overdue_percentage > 15 ? "Critical" : data.overdue_percentage > 10 ? "Warning" : "Good",
+          text: data.overdue_percentage > 15 ? t("vendors.status_badges.critical") : data.overdue_percentage > 10 ? t("vendors.status_badges.warning") : t("vendors.status_badges.good"),
           variant: data.overdue_percentage > 15 ? "destructive" : data.overdue_percentage > 10 ? "outline" : "default"
         } : undefined}
         loading={loading}
@@ -156,10 +156,10 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
       <KPICard
         title={t("vendors.kpi.active_vendors")}
         value={data ? data.active_vendors_this_month.toString() : "Loading..."}
-        subtitle="This month"
+        subtitle={t("vendors.kpi.this_month")}
         icon={Users}
         badge={data ? {
-          text: data.active_vendors_this_month > 40 ? "High Activity" : "Normal",
+          text: data.active_vendors_this_month > 40 ? t("vendors.status_badges.high_activity") : t("vendors.status_badges.normal"),
           variant: "secondary"
         } : undefined}
         loading={loading}
@@ -170,10 +170,10 @@ export function VendorKPICards({ className }: VendorKPICardsProps) {
       <KPICard
         title={t("vendors.kpi.payment_success")}
         value={data ? formatPercentage(data.payment_success_rate) : "Loading..."}
-        subtitle={data ? `${data.paid_bills} paid bills` : undefined}
+        subtitle={data ? `${data.paid_bills} paid ${t("vendors.performance.bills").toLowerCase()}` : undefined}
         icon={CheckCircle}
         badge={data ? {
-          text: data.payment_success_rate > 90 ? "Excellent" : data.payment_success_rate > 80 ? "Good" : "Needs Work",
+          text: data.payment_success_rate > 90 ? t("vendors.status_badges.excellent") : data.payment_success_rate > 80 ? t("vendors.status_badges.good") : t("vendors.status_badges.needs_work"),
           variant: data.payment_success_rate > 90 ? "default" : data.payment_success_rate > 80 ? "secondary" : "destructive"
         } : undefined}
         loading={loading}
