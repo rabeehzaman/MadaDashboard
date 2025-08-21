@@ -66,7 +66,7 @@
     "expenses": "Expenses",
     "profit": "Profit",
     "growth": "Growth",
-    "total_revenue": "Total Revenue",
+    "total_revenue": "Total Sales",
     "taxable_sales": "Taxable Sales",
     "net_profit": "Net Profit",
     "profit_margin": "Profit Margin",
@@ -97,7 +97,14 @@
       "unit_cost_header": "Unit Cost",
       "total_cost": "Total Cost",
       "total_cost_with_vat": "Total Cost with VAT",
-      "total": "Total:"
+      "total": "Total:",
+      "invoice_items": "Invoice Items",
+      "item_name": "Item Name",
+      "items": "items",
+      "quantity": "Qty",
+      "no_items_found": "No items found for this invoice",
+      "branch": "Branch",
+      "branch_name": "Branch Name"
     },
     "tabs": {
       "profit_by_item": "Profit by Item",
@@ -162,6 +169,11 @@
   },
   "actions": {
     "show_all": "Show All",
+    "export_csv": "Export to CSV",
+    "export_all": "Export All Invoices",
+    "export_invoice_items": "Export with Items",
+    "export_current": "Export Current View",
+    "downloading": "Downloading...",
     "load_more": "Load More",
     "export": "Export",
     "refresh": "Refresh"

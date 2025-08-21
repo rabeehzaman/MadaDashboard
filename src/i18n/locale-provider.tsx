@@ -31,11 +31,8 @@ interface LocaleProviderProps {
 }
 
 export function LocaleProvider({ children, initialLocale }: LocaleProviderProps) {
-  console.log('LocaleProvider initialized with locale:', initialLocale) // Debug log
-  
   const t = (key: string): string => {
     const translation = getNestedValue(translations[initialLocale], key)
-    console.log(`Translation for "${key}":`, translation) // Debug log
     return translation || key
   }
 

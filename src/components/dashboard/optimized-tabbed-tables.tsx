@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Package, Users, FileText, Warehouse, ChevronDown } from "lucide-react"
+import { Package, Users, FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2 } from "lucide-react"
 import { 
   useOptimizedProfitByItem, 
   useOptimizedProfitByCustomer, 
@@ -15,11 +15,14 @@ import {
   useItemFilterOptions,
   useCustomerFilterOptions,
   useInvoiceFilterOptions,
-  useWarehouseFilterOptions
+  useWarehouseFilterOptions,
+  useInvoiceItems
 } from "@/hooks/use-optimized-data"
 import { SearchableSelect } from "@/components/ui/searchable-select"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { formatCurrencyTable, formatNumber, formatDateSA } from "@/lib/formatting"
 import { useLocale } from "@/i18n/locale-provider"
+import { exportInvoicesToCSV, exportSingleInvoiceWithItemsToCSV, exportInvoicesWithExpandedItems, exportInvoicesDirectFromDB, exportInvoicesWithItemsDirectFromDB } from "@/lib/csv-export"
 import type { DateRange } from "./date-filter"
 
 interface OptimizedTabbedTablesProps {
@@ -145,11 +148,431 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   // However, we implement a simple pagination display for better UX
   const [showAllItems, setShowAllItems] = React.useState(false)
   const [showAllInvoices, setShowAllInvoices] = React.useState(false)
+  const [expandedInvoices, setExpandedInvoices] = React.useState<Set<string>>(new Set())
+  const [isExporting, setIsExporting] = React.useState(false)
 
   const displayItemData = showAllItems ? itemData : itemData.slice(0, itemsPerPage)
   const displayInvoiceData = showAllInvoices ? invoiceData : invoiceData.slice(0, itemsPerPage)
   const displayCustomerData = customerData
   const displayStockData = stockData
+
+  // Helper function to toggle invoice expansion
+  const toggleInvoiceExpansion = React.useCallback((invoiceNo: string, event?: React.MouseEvent | React.KeyboardEvent) => {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    
+    setExpandedInvoices(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(invoiceNo)) {
+        newSet.delete(invoiceNo)
+      } else {
+        newSet.add(invoiceNo)
+      }
+      return newSet
+    })
+  }, [])
+
+  // Helper function to get branch badge color
+  const getBranchBadgeColor = (branchName: string) => {
+    switch (branchName) {
+      case 'Main Branch':
+        return 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700'
+      case 'Asir S Man':
+        return 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700'
+      case 'Rashid S Man':
+        return 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 border-purple-300 dark:border-purple-700'
+      case 'MAJEED':
+        return 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200 border-orange-300 dark:border-orange-700'
+      default:
+        return 'bg-gray-100 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700'
+    }
+  }
+
+  // Export handler functions
+  const handleExportAllInvoices = async () => {
+    setIsExporting(true)
+    try {
+      // Export directly from database with current filters
+      await exportInvoicesDirectFromDB(
+        dateRange?.from,
+        dateRange?.to,
+        branchFilter,
+        invoiceCustomerFilter,
+        invoiceNumberFilter
+      )
+    } catch (error) {
+      console.error('Export failed:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const handleExportWithExpandedItems = async () => {
+    setIsExporting(true)
+    try {
+      // Export directly from database with current filters and fetch all items
+      await exportInvoicesWithItemsDirectFromDB(
+        dateRange?.from,
+        dateRange?.to,
+        branchFilter,
+        invoiceCustomerFilter,
+        invoiceNumberFilter
+      )
+    } catch (error) {
+      console.error('Export with items failed:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const handleExportSingleInvoice = async (invoice: any, items?: any[]) => {
+    setIsExporting(true)
+    try {
+      if (items && items.length > 0) {
+        exportSingleInvoiceWithItemsToCSV(invoice, items)
+      } else {
+        exportInvoicesToCSV([invoice])
+      }
+    } catch (error) {
+      console.error('Single invoice export failed:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // Component for expandable invoice row
+  const ExpandableInvoiceRow = ({ invoice, index }: { invoice: any, index: number }) => {
+    const isExpanded = expandedInvoices.has(invoice.invoice_no)
+    const { items, loading: itemsLoading } = useInvoiceItems(isExpanded ? invoice.invoice_no : undefined)
+    
+    
+    const profitValue = invoice.total_profit || 0
+    const profitPercentage = invoice.profit_margin_percent || 0
+    const isProfit = profitValue >= 0
+    
+    return (
+      <>
+        {/* Main Invoice Row with enhanced styling */}
+        <TableRow 
+          key={`${invoice.invoice_no}-${index}`}
+          className={`
+            cursor-pointer transition-all duration-200 ease-in-out
+            hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30
+            ${isExpanded ? 'bg-muted/40 shadow-sm' : ''}
+            ${index % 2 === 0 ? 'bg-muted/10' : 'bg-background'}
+            border-l-4 border-transparent hover:border-l-primary/50
+            ${isExpanded ? 'border-l-primary' : ''}
+            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+          `}
+          onClick={(e) => toggleInvoiceExpansion(invoice.invoice_no, e)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              toggleInvoiceExpansion(invoice.invoice_no, e)
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-expanded={isExpanded}
+          aria-label={`${isExpanded ? 'Collapse' : 'Expand'} invoice ${invoice.invoice_no} details for ${invoice.customer_name || 'Unknown Customer'}`}
+        >
+          <TableCell className="py-4 pl-4">
+            <div className="flex items-center gap-3">
+              <div className={`
+                transition-transform duration-200 ease-in-out p-1 rounded-full
+                ${isExpanded ? 'bg-primary/20 transform rotate-0' : 'hover:bg-muted'}
+              `}>
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-primary transition-colors duration-200" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground transition-colors duration-200" />
+                )}
+              </div>
+              <div>
+                <div className="font-medium text-sm text-foreground">{formatDateSA(invoice.inv_date)}</div>
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground/80">
+                  {items && items.length > 0 ? `${items.length} items` : 'Click to view items'}
+                </div>
+              </div>
+            </div>
+          </TableCell>
+          
+          <TableCell className="py-4">
+            <div className="space-y-1">
+              <div className="font-bold text-primary dark:text-primary">{invoice.invoice_no}</div>
+              {invoice.branch_name && (
+                <div className="flex items-center gap-1">
+                  <Building2 className="h-3 w-3 text-muted-foreground" />
+                  <Badge 
+                    variant="outline" 
+                    className={`text-xs font-medium px-2 py-0.5 border ${getBranchBadgeColor(invoice.branch_name)}`}
+                  >
+                    {invoice.branch_name}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          </TableCell>
+          
+          <TableCell className="py-4">
+            <div className="font-medium text-foreground dark:text-foreground max-w-[200px] truncate" title={invoice.customer_name}>
+              {invoice.customer_name || 'Unknown Customer'}
+            </div>
+          </TableCell>
+          
+          <TableCell className="text-right py-4">
+            <div className="font-semibold text-foreground">{formatCurrencyTable(invoice.total_sale_price || 0)}</div>
+          </TableCell>
+          
+          <TableCell className="text-right py-4">
+            <div className="font-semibold text-orange-600 dark:text-orange-400">{formatCurrencyTable(invoice.total_cost || 0)}</div>
+          </TableCell>
+          
+          <TableCell className="text-right py-4">
+            <div className="flex items-center justify-end gap-2">
+              {isProfit ? (
+                <TrendingUp className="h-3 w-3 text-green-600" />
+              ) : (
+                <TrendingDown className="h-3 w-3 text-red-600" />
+              )}
+              <Badge 
+                variant={isProfit ? "default" : "destructive"}
+                className={`font-semibold shadow-sm ${
+                  isProfit 
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                    : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                }`}
+              >
+                {formatCurrencyTable(profitValue)}
+              </Badge>
+            </div>
+          </TableCell>
+          
+          <TableCell className="text-right py-4">
+            <Badge 
+              variant={isProfit ? "default" : "destructive"}
+              className={`font-semibold text-sm px-3 py-1 shadow-sm ${
+                isProfit 
+                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700' 
+                  : 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700'
+              }`}
+            >
+              {profitPercentage.toFixed(1)}%
+            </Badge>
+          </TableCell>
+        </TableRow>
+
+        {/* Enhanced Expandable Items Section with smooth animation */}
+        {isExpanded && (
+          <TableRow>
+            <TableCell colSpan={7} className="p-0">
+              <div className="bg-gradient-to-r from-muted/30 to-muted/20 border-t-2 border-primary/20 animate-in slide-in-from-top-1 duration-500 ease-out">
+                {itemsLoading ? (
+                  <div className="p-6 flex items-center justify-center" role="status" aria-live="polite">
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-3 border-primary border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                      <span className="text-sm font-medium text-primary animate-pulse" id="loading-text">{t("common.loading")}</span>
+                    </div>
+                  </div>
+                ) : items && items.length > 0 ? (
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-4 pb-3 border-b border-muted">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-bold text-primary">
+                        {t("tables.headers.invoice_items")} ({items.length} {t("tables.headers.items")})
+                      </span>
+                    </div>
+                    
+                    <div className="rounded-lg border border-muted/50 overflow-hidden shadow-sm">
+                      <Table className="border-0" role="table" aria-label={`Invoice items for ${invoice.invoice_no}`}>
+                        <TableHeader>
+                          <TableRow className="bg-muted/50 border-b border-muted">
+                            <TableHead className="text-xs font-semibold text-foreground py-3">{t("tables.headers.item_name")}</TableHead>
+                            <TableHead className="text-xs font-semibold text-foreground text-center py-3">{t("tables.headers.quantity")}</TableHead>
+                            <TableHead className="text-xs font-semibold text-foreground text-right py-3">{t("tables.headers.sale_price")}</TableHead>
+                            <TableHead className="text-xs font-semibold text-foreground text-right py-3">{t("tables.headers.cost")}</TableHead>
+                            <TableHead className="text-xs font-semibold text-foreground text-right py-3">{t("tables.headers.profit")}</TableHead>
+                            <TableHead className="text-xs font-semibold text-foreground text-right py-3">{t("tables.headers.profit_percentage")}</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {items.map((item, itemIndex) => {
+                            const itemProfit = item.profit || 0
+                            const itemProfitPercent = item.profit_percentage || 0
+                            const isItemProfit = itemProfit >= 0
+                            
+                            return (
+                              <TableRow 
+                                key={itemIndex} 
+                                className={`
+                                  border-muted/30 hover:bg-muted/20 transition-all duration-200 ease-in-out
+                                  ${itemIndex % 2 === 0 ? 'bg-background' : 'bg-muted/10'}
+                                  hover:shadow-sm hover:scale-[1.001]
+                                  animate-in fade-in-0 slide-in-from-left-1
+                                `}
+                                style={{ animationDelay: `${itemIndex * 50}ms` }}
+                              >
+                                <TableCell className="text-sm py-3 pl-4">
+                                  <div className="max-w-[250px] truncate font-medium text-foreground" title={item.item_name}>
+                                    {item.item_name}
+                                  </div>
+                                </TableCell>
+                                
+                                <TableCell className="text-center text-sm py-3">
+                                  <span className="font-semibold bg-blue-50 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100 px-2 py-1 rounded-md border dark:border-blue-700">
+                                    {formatNumber(item.quantity)}
+                                  </span>
+                                </TableCell>
+                                
+                                <TableCell className="text-right text-sm py-3">
+                                  <div className="space-y-1">
+                                    <div className="font-bold text-green-700 dark:text-green-400">
+                                      {formatCurrencyTable(item.sale_price)}
+                                    </div>
+                                    <div className="text-xs bg-green-50 dark:bg-green-900/50 text-green-800 dark:text-green-200 px-2 py-1 rounded border dark:border-green-700">
+                                      ({formatCurrencyTable(item.unit_price)}/u)
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                
+                                <TableCell className="text-right text-sm py-3">
+                                  <div className="space-y-1">
+                                    <div className="font-bold text-orange-700 dark:text-orange-400">
+                                      {formatCurrencyTable(item.cost)}
+                                    </div>
+                                    <div className="text-xs bg-orange-50 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200 px-2 py-1 rounded border dark:border-orange-700">
+                                      ({formatCurrencyTable(item.unit_cost)}/u)
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                
+                                <TableCell className="text-right text-sm py-3">
+                                  <div className="space-y-1">
+                                    <div className="flex items-center justify-end gap-1">
+                                      {isItemProfit ? (
+                                        <TrendingUp className="h-3 w-3 text-green-600" />
+                                      ) : (
+                                        <TrendingDown className="h-3 w-3 text-red-600" />
+                                      )}
+                                      <Badge 
+                                        variant={isItemProfit ? "default" : "destructive"}
+                                        className={`text-xs font-semibold ${
+                                          isItemProfit 
+                                            ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                                            : 'bg-gradient-to-r from-red-500 to-red-600'
+                                        }`}
+                                      >
+                                        {formatCurrencyTable(itemProfit)}
+                                      </Badge>
+                                    </div>
+                                    <div className="text-xs bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 px-2 py-1 rounded border dark:border-slate-600">
+                                      ({formatCurrencyTable(item.unit_profit)}/u)
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                
+                                <TableCell className="text-right text-sm py-3">
+                                  <Badge 
+                                    variant={isItemProfit ? "default" : "destructive"}
+                                    className={`text-xs font-bold px-3 py-1 ${
+                                      isItemProfit 
+                                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                                        : 'bg-gradient-to-r from-rose-500 to-rose-600'
+                                    }`}
+                                  >
+                                    {itemProfitPercent.toFixed(1)}%
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })}
+                          {/* Enhanced Items Summary Row */}
+                          <TableRow className="bg-gradient-to-r from-primary/10 to-primary/5 border-t-2 border-primary/30 animate-in fade-in-0 slide-in-from-bottom-2 duration-300" style={{ animationDelay: `${items.length * 50 + 200}ms` }}>
+                            <TableCell className="font-bold text-sm py-4 pl-4">
+                              <div className="flex items-center gap-2">
+                                <Package className="h-4 w-4 text-primary" />
+                                <span className="text-primary">
+                                  {t("tables.headers.total")} ({items.length} {t("tables.headers.items")})
+                                </span>
+                              </div>
+                            </TableCell>
+                            
+                            <TableCell className="text-center font-bold text-sm py-4">
+                              <div className="bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100 px-3 py-2 rounded-lg border dark:border-blue-700">
+                                {formatNumber(items.reduce((sum, item) => sum + item.quantity, 0))}
+                              </div>
+                            </TableCell>
+                            
+                            <TableCell className="text-right font-bold text-sm py-4">
+                              <div className="text-green-700 dark:text-green-400 text-lg">
+                                {formatCurrencyTable(items.reduce((sum, item) => sum + item.sale_price, 0))}
+                              </div>
+                            </TableCell>
+                            
+                            <TableCell className="text-right font-bold text-sm py-4">
+                              <div className="text-orange-700 dark:text-orange-400 text-lg">
+                                {formatCurrencyTable(items.reduce((sum, item) => sum + item.cost, 0))}
+                              </div>
+                            </TableCell>
+                            
+                            <TableCell className="text-right font-bold text-sm py-4">
+                              <div className="flex items-center justify-end gap-2">
+                                {items.reduce((sum, item) => sum + item.profit, 0) >= 0 ? (
+                                  <TrendingUp className="h-4 w-4 text-green-600" />
+                                ) : (
+                                  <TrendingDown className="h-4 w-4 text-red-600" />
+                                )}
+                                <Badge 
+                                  variant={items.reduce((sum, item) => sum + item.profit, 0) >= 0 ? "default" : "destructive"}
+                                  className={`text-sm font-bold px-4 py-2 shadow-md ${
+                                    items.reduce((sum, item) => sum + item.profit, 0) >= 0
+                                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                                      : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                                  }`}
+                                >
+                                  {formatCurrencyTable(items.reduce((sum, item) => sum + item.profit, 0))}
+                                </Badge>
+                              </div>
+                            </TableCell>
+                            
+                            <TableCell className="text-right font-bold text-sm py-4">
+                              <Badge 
+                                variant={items.reduce((sum, item) => sum + item.profit, 0) >= 0 ? "default" : "destructive"}
+                                className={`text-sm font-bold px-4 py-2 shadow-md ${
+                                  items.reduce((sum, item) => sum + item.profit, 0) >= 0
+                                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700' 
+                                    : 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700'
+                                }`}
+                              >
+                                {items.reduce((sum, item) => sum + item.sale_price, 0) > 0 
+                                  ? (((items.reduce((sum, item) => sum + item.profit, 0)) / (items.reduce((sum, item) => sum + item.sale_price, 0))) * 100).toFixed(1) 
+                                  : 0}%
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-8 text-center" role="status" aria-live="polite">
+                    <div className="flex flex-col items-center gap-3">
+                      <FileText className="h-8 w-8 text-muted-foreground/50" aria-hidden="true" />
+                      <span className="text-sm text-muted-foreground font-medium">
+                        {t("tables.no_items_found")}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
+      </>
+    )
+  }
 
   // Calculate totals from COMPLETE dataset (already filtered by database)
   const customerTotal = displayCustomerData.reduce((sum, item) => sum + (item.total_profit || 0), 0)
@@ -288,31 +711,62 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
               <div className="md:hidden">
                 <div className="space-y-3 p-3">
                   {displayItemData.map((item, index) => (
-                    <div key={`${item.inv_no}-${index}`} className="bg-muted/30 p-3 rounded-lg space-y-2">
-                      <div className="flex justify-between items-start">
-                        <div className="text-sm font-medium truncate flex-1 mr-2">{item.item}</div>
-                        <Badge variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"} className="text-xs">
-                          {(item.profit_percent || 0).toFixed(1)}%
-                        </Badge>
+                    <div 
+                      key={`${item.inv_no}-${index}`} 
+                      className="bg-gradient-to-r from-muted/40 to-muted/20 p-4 rounded-xl space-y-3 shadow-sm hover:shadow-md transition-all duration-200 border border-muted/50 hover:border-primary/20 active:scale-[0.99]"
+                    >
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="text-sm font-semibold text-foreground truncate flex-1">{item.item}</div>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {(item.profit_percent || 0) >= 0 ? (
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 text-red-600" />
+                          )}
+                          <Badge 
+                            variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"} 
+                            className={`text-xs font-bold px-2 py-1 ${
+                              (item.profit_percent || 0) >= 0 
+                                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                                : 'bg-gradient-to-r from-rose-500 to-rose-600'
+                            }`}
+                          >
+                            {(item.profit_percent || 0).toFixed(1)}%
+                          </Badge>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                         <div>{t("tables.headers.date")}: {formatDateSA(item.inv_date)}</div>
                         <div>{t("tables.headers.invoice_number")}: {item.inv_no}</div>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">{t("tables.headers.unit_price")}:</span><br/>
-                          <span className="font-medium">{formatCurrencyTable(item.unit_price || 0)}</span>
+                      <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div className="bg-green-50 dark:bg-green-950/20 p-2 rounded-lg">
+                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_price")}:</span><br/>
+                          <span className="font-bold text-green-700 dark:text-green-400">{formatCurrencyTable(item.unit_price || 0)}</span>
                         </div>
-                        <div>
-                          <span className="text-muted-foreground">{t("tables.headers.unit_cost")}:</span><br/>
-                          <span className="font-medium">{formatCurrencyTable(item.unit_cost || 0)}</span>
+                        <div className="bg-orange-50 dark:bg-orange-950/20 p-2 rounded-lg">
+                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_cost")}:</span><br/>
+                          <span className="font-bold text-orange-700 dark:text-orange-400">{formatCurrencyTable(item.unit_cost || 0)}</span>
                         </div>
-                        <div>
-                          <span className="text-muted-foreground">{t("tables.headers.unit_profit")}:</span><br/>
-                          <Badge variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"} className="text-xs">
-                            {formatCurrencyTable(item.unit_profit || 0)}
-                          </Badge>
+                        <div className="p-2 rounded-lg bg-muted/30">
+                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_profit")}:</span><br/>
+                          <div className="flex items-center gap-1 mt-1">
+                            {(item.unit_profit || 0) >= 0 ? (
+                              <TrendingUp className="h-3 w-3 text-green-600" />
+                            ) : (
+                              <TrendingDown className="h-3 w-3 text-red-600" />
+                            )}
+                            <Badge 
+                              variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"} 
+                              className={`text-xs font-bold px-2 py-1 ${
+                                (item.unit_profit || 0) >= 0 
+                                  ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                                  : 'bg-gradient-to-r from-red-500 to-red-600'
+                              }`}
+                            >
+                              {formatCurrencyTable(item.unit_profit || 0)}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -343,12 +797,33 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                       <TableCell className="text-right">{formatCurrencyTable(item.unit_price || 0)}</TableCell>
                       <TableCell className="text-right">{formatCurrencyTable(item.unit_cost || 0)}</TableCell>
                       <TableCell className="text-right">
-                        <Badge variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"}>
-                          {formatCurrencyTable(item.unit_profit || 0)}
-                        </Badge>
+                        <div className="flex items-center justify-end gap-1">
+                          {(item.unit_profit || 0) >= 0 ? (
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 text-red-600" />
+                          )}
+                          <Badge 
+                            variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"}
+                            className={`font-semibold transition-all duration-200 ${
+                              (item.unit_profit || 0) >= 0 
+                                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                                : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                            }`}
+                          >
+                            {formatCurrencyTable(item.unit_profit || 0)}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Badge variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"}>
+                        <Badge 
+                          variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"}
+                          className={`font-bold px-3 py-1 transition-all duration-200 shadow-sm ${
+                            (item.profit_percent || 0) >= 0 
+                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700' 
+                              : 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700'
+                          }`}
+                        >
                           {(item.profit_percent || 0).toFixed(1)}%
                         </Badge>
                       </TableCell>
@@ -430,11 +905,28 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 </div>
                 <div className="space-y-2 p-3">
                   {displayCustomerData.map((customer, index) => (
-                    <div key={`${customer.customer_name}-${index}`} className="flex justify-between items-center p-2 bg-muted/30 rounded">
-                      <div className="text-sm font-medium truncate flex-1 mr-2">{customer.customer_name}</div>
-                      <Badge variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"} className="text-xs">
-                        {formatCurrencyTable(customer.total_profit || 0)}
-                      </Badge>
+                    <div 
+                      key={`${customer.customer_name}-${index}`} 
+                      className="flex justify-between items-center p-4 bg-gradient-to-r from-muted/40 to-muted/20 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-muted/50 hover:border-primary/20 active:scale-[0.99]"
+                    >
+                      <div className="text-sm font-semibold text-foreground truncate flex-1 mr-3">{customer.customer_name}</div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {(customer.total_profit || 0) >= 0 ? (
+                          <TrendingUp className="h-3 w-3 text-green-600" />
+                        ) : (
+                          <TrendingDown className="h-3 w-3 text-red-600" />
+                        )}
+                        <Badge 
+                          variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"} 
+                          className={`text-xs font-bold px-3 py-1 shadow-sm ${
+                            (customer.total_profit || 0) >= 0 
+                              ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                              : 'bg-gradient-to-r from-red-500 to-red-600'
+                          }`}
+                        >
+                          {formatCurrencyTable(customer.total_profit || 0)}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -460,9 +952,23 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                     <TableRow key={`${customer.customer_name}-${index}`}>
                       <TableCell>{customer.customer_name}</TableCell>
                       <TableCell className="text-right">
-                        <Badge variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"}>
-                          {formatCurrencyTable(customer.total_profit || 0)}
-                        </Badge>
+                        <div className="flex items-center justify-end gap-2">
+                          {(customer.total_profit || 0) >= 0 ? (
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 text-red-600" />
+                          )}
+                          <Badge 
+                            variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"}
+                            className={`font-semibold px-3 py-1 transition-all duration-200 shadow-sm ${
+                              (customer.total_profit || 0) >= 0 
+                                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                                : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                            }`}
+                          >
+                            {formatCurrencyTable(customer.total_profit || 0)}
+                          </Badge>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -528,6 +1034,38 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   Clear All
                 </Button>
               )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isExporting || displayInvoiceData.length === 0}
+                    className="whitespace-nowrap flex items-center gap-2"
+                  >
+                    {isExporting ? (
+                      <>
+                        <div className="w-3 h-3 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+                        {t("actions.downloading")}
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-3 w-3" />
+                        {t("actions.export_csv")}
+                      </>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleExportAllInvoices}>
+                    <Download className="h-4 w-4 mr-2" />
+                    {t("actions.export_all")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportWithExpandedItems}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    {t("actions.export_invoice_items")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="rounded-md border overflow-hidden">
               {/* Mobile View */}
@@ -561,7 +1099,12 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   {displayInvoiceData.map((invoice, index) => (
                     <div key={`${invoice.invoice_no}-${index}`} className="bg-muted/30 p-3 rounded-lg space-y-2">
                       <div className="flex justify-between items-start">
-                        <div className="text-sm font-medium">{invoice.invoice_no}</div>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium">{invoice.invoice_no}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {invoice.customer_name || 'Unknown Customer'}
+                          </div>
+                        </div>
                         <Badge variant={(invoice.profit_margin_percent || 0) >= 0 ? "default" : "destructive"} className="text-xs">
                           {(invoice.profit_margin_percent || 0).toFixed(1)}%
                         </Badge>
@@ -590,20 +1133,21 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 </div>
               </div>
               
-              {/* Desktop View */}
+              {/* Desktop View - Enhanced with Expandable Invoice Items */}
               <div className="hidden md:block overflow-x-auto">
-                <Table className="min-w-[600px]">
+                <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("tables.headers.date")}</TableHead>
                     <TableHead>{t("tables.headers.invoice_number")}</TableHead>
+                    <TableHead>{t("tables.headers.customer_name")}</TableHead>
                     <TableHead className="text-right">{t("tables.headers.sale_price")}</TableHead>
                     <TableHead className="text-right">{t("tables.headers.cost")}</TableHead>
                     <TableHead className="text-right">{t("tables.headers.profit")}</TableHead>
                     <TableHead className="text-right">{t("tables.headers.profit_percentage")}</TableHead>
                   </TableRow>
                   <TableRow>
-                    <TableHead colSpan={2} className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
+                    <TableHead colSpan={3} className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
                     <TableHead className="bg-muted font-semibold text-right">
                       {formatCurrencyTable(invoiceTotal.salePrice)}
                     </TableHead>
@@ -620,22 +1164,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 </TableHeader>
                 <TableBody>
                   {displayInvoiceData.map((invoice, index) => (
-                    <TableRow key={`${invoice.invoice_no}-${index}`}>
-                      <TableCell>{formatDateSA(invoice.inv_date)}</TableCell>
-                      <TableCell>{invoice.invoice_no}</TableCell>
-                      <TableCell className="text-right">{formatCurrencyTable(invoice.total_sale_price || 0)}</TableCell>
-                      <TableCell className="text-right">{formatCurrencyTable(invoice.total_cost || 0)}</TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant={(invoice.total_profit || 0) >= 0 ? "default" : "destructive"}>
-                          {formatCurrencyTable(invoice.total_profit || 0)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant={(invoice.profit_margin_percent || 0) >= 0 ? "default" : "destructive"}>
-                          {(invoice.profit_margin_percent || 0).toFixed(1)}%
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                    <ExpandableInvoiceRow key={`${invoice.invoice_no}-${index}`} invoice={invoice} index={index} />
                   ))}
                 </TableBody>
                 </Table>
@@ -646,9 +1175,10 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Button 
                   onClick={() => setShowAllInvoices(true)}
                   variant="outline"
-                  className="flex items-center gap-2 min-h-[44px]"
+                  className="flex items-center gap-2 min-h-[44px] focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  aria-label={`Show all ${invoiceData.length} invoices instead of only ${itemsPerPage}`}
                 >
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4" aria-hidden="true" />
                   {t("actions.show_all")} ({invoiceData.length} {t("kpi.invoices")})
                 </Button>
               </div>

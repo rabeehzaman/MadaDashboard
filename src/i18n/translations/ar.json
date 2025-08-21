@@ -66,7 +66,7 @@
     "expenses": "المصروفات",
     "profit": "الربح",
     "growth": "النمو",
-    "total_revenue": "إجمالي الإيرادات",
+    "total_revenue": "إجمالي المبيعات",
     "taxable_sales": "المبيعات الخاضعة للضريبة",
     "net_profit": "صافي الربح",
     "profit_margin": "هامش الربح",
@@ -97,7 +97,14 @@
       "unit_cost_header": "تكلفة الوحدة",
       "total_cost": "التكلفة الإجمالية",
       "total_cost_with_vat": "التكلفة الإجمالية مع الضريبة",
-      "total": "الإجمالي:"
+      "total": "الإجمالي:",
+      "invoice_items": "أصناف الفاتورة",
+      "item_name": "اسم الصنف",
+      "items": "أصناف",
+      "quantity": "الكمية",
+      "no_items_found": "لا توجد أصناف لهذه الفاتورة",
+      "branch": "الفرع",
+      "branch_name": "اسم الفرع"
     },
     "tabs": {
       "profit_by_item": "الربح حسب الصنف",
@@ -162,6 +169,11 @@
   },
   "actions": {
     "show_all": "عرض الكل",
+    "export_csv": "تصدير إلى CSV",
+    "export_all": "تصدير جميع الفواتير",
+    "export_invoice_items": "تصدير مع العناصر",
+    "export_current": "تصدير العرض الحالي",
+    "downloading": "جاري التنزيل...",
     "load_more": "تحميل المزيد",
     "export": "تصدير",
     "refresh": "تحديث"

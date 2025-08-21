@@ -30,14 +30,21 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
   const { data: expenses, loading, error } = useExpenses(branchFilter, dateRange)
   const [searchTerm, setSearchTerm] = React.useState("")
 
-  // Filter expenses based on search term
+  // Filter and sort expenses based on search term (biggest first)
   const filteredExpenses = React.useMemo(() => {
-    if (!searchTerm) return expenses || []
+    const filtered = searchTerm 
+      ? (expenses || []).filter(expense =>
+          expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          expense.branch_name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : expenses || []
     
-    return (expenses || []).filter(expense =>
-      expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.branch_name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    // Sort by amount (biggest first)
+    return [...filtered].sort((a, b) => {
+      const amountA = typeof a.amount === 'string' ? parseFloat(a.amount) || 0 : a.amount
+      const amountB = typeof b.amount === 'string' ? parseFloat(b.amount) || 0 : b.amount
+      return amountB - amountA
+    })
   }, [expenses, searchTerm])
 
   // Calculate total amount
@@ -107,6 +114,7 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
                 <TableHead>Date</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">%</TableHead>
                 <TableHead>Branch</TableHead>
               </TableRow>
             </TableHeader>
@@ -120,35 +128,46 @@ export function ExpensesTable({ branchFilter, dateRange }: ExpensesTableProps) {
                 <TableCell className="text-right font-bold text-lg">
                   {formatCurrency(totalAmount)}
                 </TableCell>
+                <TableCell className="text-right font-bold">
+                  100.0%
+                </TableCell>
                 <TableCell className="font-bold">
                   {branchFilter ? branchFilter : t("pages.expenses.all_branches")}
                 </TableCell>
               </TableRow>
               
               {/* Expense Rows */}
-              {filteredExpenses.map((expense, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    {expense.date 
-                      ? format(new Date(expense.date), "MMM dd, yyyy")
-                      : "-"
-                    }
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm font-medium whitespace-normal break-words">
-                      {expense.description}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {formatCurrency(typeof expense.amount === 'string' ? parseFloat(expense.amount) || 0 : expense.amount)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="whitespace-nowrap">
-                      {expense.branch_name}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filteredExpenses.map((expense, index) => {
+                const expenseAmount = typeof expense.amount === 'string' ? parseFloat(expense.amount) || 0 : expense.amount
+                const percentage = totalAmount > 0 ? (expenseAmount / totalAmount) * 100 : 0
+                
+                return (
+                  <TableRow key={index}>
+                    <TableCell>
+                      {expense.date 
+                        ? format(new Date(expense.date), "MMM dd, yyyy")
+                        : "-"
+                      }
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm font-medium whitespace-normal break-words">
+                        {expense.description}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      {formatCurrency(expenseAmount)}
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-medium">
+                      {percentage.toFixed(1)}%
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        {expense.branch_name}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
             {filteredExpenses.length === 0 && (
               <TableCaption>

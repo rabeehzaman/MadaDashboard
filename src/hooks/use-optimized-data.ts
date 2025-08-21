@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   getOptimizedKPIs,
   getOptimizedProfitByItem,
@@ -13,6 +13,7 @@ import {
   getCustomerFilterOptions,
   getInvoiceFilterOptions,
   getWarehouseFilterOptions,
+  getInvoiceItems,
   formatDateForRPC,
   type OptimizedKPIs,
   type OptimizedTransaction,
@@ -22,7 +23,8 @@ import {
   type PaginationInfo,
   type ProfitByItemTotals,
   type ProfitByInvoiceTotals,
-  type FilterOption
+  type FilterOption,
+  type InvoiceItem
 } from '@/lib/database-optimized'
 import type { DateRange } from '@/components/dashboard/date-filter'
 
@@ -640,4 +642,81 @@ export function useWarehouseFilterOptions() {
   }, [])
 
   return { options, loading, error }
+}
+
+// =============================================================================
+// INVOICE ITEMS HOOK
+// =============================================================================
+
+// Global cache to prevent duplicate loading across all hook instances
+const invoiceItemsCache = new Map<string, { items: InvoiceItem[], loading: boolean, error: string | null }>()
+
+export function useInvoiceItems(invoiceNumber?: string) {
+  const [state, setState] = useState<{ items: InvoiceItem[], loading: boolean, error: string | null }>({
+    items: [],
+    loading: false,
+    error: null
+  })
+
+  useEffect(() => {
+    if (!invoiceNumber) {
+      setState({ items: [], loading: false, error: null })
+      return
+    }
+
+    const cacheKey = invoiceNumber
+
+    // Check cache first
+    if (invoiceItemsCache.has(cacheKey)) {
+      const cachedData = invoiceItemsCache.get(cacheKey)!
+      setState(cachedData)
+      return
+    }
+
+    // Don't load if already loading
+    if (state.loading) {
+      return
+    }
+
+    async function loadItems() {
+      setState({ items: [], loading: true, error: null })
+
+      try {
+        console.log("📋 Loading invoice items for:", invoiceNumber)
+        const result = await getInvoiceItems(invoiceNumber)
+        
+        const newState = result === null 
+          ? { items: [], loading: false, error: "Failed to load invoice items" }
+          : { items: result, loading: false, error: null }
+        
+        // Cache the result
+        invoiceItemsCache.set(cacheKey, newState)
+        setState(newState)
+        
+        if (result !== null) {
+          console.log("✅ Invoice items loaded:", { count: result.length })
+        }
+      } catch (err) {
+        console.error("❌ Error loading invoice items:", err)
+        const errorState = { items: [], loading: false, error: "Failed to load invoice items" }
+        invoiceItemsCache.set(cacheKey, errorState)
+        setState(errorState)
+      }
+    }
+
+    loadItems()
+  }, [invoiceNumber])
+
+  return state
+}
+
+// Export function to access the global cache for export functionality
+export function getInvoiceItemsFromCache(): Map<string, InvoiceItem[]> {
+  const itemsMap = new Map<string, InvoiceItem[]>()
+  for (const [key, value] of invoiceItemsCache.entries()) {
+    if (key !== 'empty' && value.items.length > 0) {
+      itemsMap.set(key, value.items)
+    }
+  }
+  return itemsMap
 }

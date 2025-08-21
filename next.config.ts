@@ -21,11 +21,11 @@ const nextConfig: NextConfig = {
 
 export default withPWA({
   dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
+  cacheOnFrontEndNav: false,
+  aggressiveFrontEndNavCaching: false,
   reloadOnOnline: true,
   swcMinify: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: true, // Disable PWA entirely for now
   workboxOptions: {
     disableDevLogs: true,
   },

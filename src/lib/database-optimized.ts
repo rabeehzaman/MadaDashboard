@@ -20,7 +20,7 @@ export async function getActiveBranches(startDate?: Date, endDate?: Date): Promi
       .from('profit_analysis_view_current')
       .select('"Branch Name"')
       .not('"Branch Name"', 'is', null)
-      .neq('"Branch Name"', 'SEB VEHICLE')
+      .in('"Branch Name"', ['Asir S Man', 'Main Branch', 'Rashid S Man', 'MAJEED'])
     
     console.log('🔍 DEBUG: Initial query built, column selected: "Branch Name"')
 
@@ -165,7 +165,7 @@ export async function getOptimizedKPIs(
     console.log('🎯 Fetching KPIs with 2025-only RPC:', { startDate, endDate, branchFilter })
 
     // Try 2025 function first, fallback to original if it doesn't exist
-    let { data, error } = await supabase.rpc('get_dashboard_kpis_2025', {
+    let { data, error } = await supabase.rpc('get_dashboard_kpis_2025_filtered', {
       start_date: startDate || '2025-01-01',
       end_date: endDate || formatDateLocal(new Date()),
       branch_filter: branchFilter || null
@@ -326,7 +326,7 @@ export async function getOptimizedProfitByItem(
     console.log('📊 Fetching profit by item (2025 only):', { startDate, endDate, branchFilter, itemFilter, customerFilter, invoiceFilter, pageLimit, pageOffset })
 
     // Try 2025 function first, fallback to original if it doesn't exist
-    let { data, error } = await supabase.rpc('get_profit_by_item_2025', {
+    let { data, error } = await supabase.rpc('get_profit_by_item_2025_filtered', {
       start_date: startDate || '2025-01-01',
       end_date: endDate || formatDateLocal(new Date()),
       branch_filter: branchFilter || null,
@@ -339,7 +339,7 @@ export async function getOptimizedProfitByItem(
 
     // If 2025 function doesn't exist or returns no data, try the original function
     if (error || !data || data.length === 0) {
-      console.log('⚠️ get_profit_by_item_2025 failed, trying original function:', error?.message)
+      console.log('⚠️ get_profit_by_item_2025_filtered failed, trying original function:', error?.message)
       // Build a search query from the filters for the original function
       let searchQuery = null
       if (itemFilter) searchQuery = itemFilter
@@ -461,7 +461,7 @@ export async function getOptimizedProfitByInvoice(
     console.log('📋 Fetching profit by invoice (2025 only):', { startDate, endDate, branchFilter, customerFilter, invoiceFilter, pageLimit, pageOffset })
 
     // Try 2025 function first, fallback to original if it doesn't exist
-    let { data, error } = await supabase.rpc('get_profit_by_invoice_2025', {
+    let { data, error } = await supabase.rpc('get_profit_by_invoice_2025_filtered', {
       start_date: startDate || '2025-01-01',
       end_date: endDate || formatDateLocal(new Date()),
       branch_filter: branchFilter || null,
@@ -473,7 +473,7 @@ export async function getOptimizedProfitByInvoice(
 
     // If 2025 function doesn't exist or returns no data, try the original function
     if (error || !data || data.length === 0) {
-      console.log('⚠️ get_profit_by_invoice_2025 failed, trying original function:', error?.message)
+      console.log('⚠️ get_profit_by_invoice_2025_filtered failed, trying original function:', error?.message)
       // Build a search query from the filters for the original function
       let searchQuery = null
       if (customerFilter) searchQuery = customerFilter
@@ -516,8 +516,24 @@ export async function getOptimizedProfitByInvoice(
 
     console.log('✅ Profit by invoice loaded:', { records: data.length, totalCount })
 
+    // Map the RPC response fields to match our interface
+    const mappedData = data.map((item: any) => ({
+      invoice_no: item.inv_no || item.invoice_no,
+      inv_date: item.inv_date,
+      customer_name: item.customer_name,
+      branch_name: item.branch_name,
+      line_items_count: item.line_items_count || 0,
+      total_quantity: item.total_quantity,
+      total_sale_price: item.total_sale_price,
+      total_sale_with_vat: item.total_sale_with_vat,
+      total_cost: item.total_cost,
+      total_profit: item.total_profit,
+      profit_margin_percent: item.profit_margin || item.profit_margin_percent,
+      total_count: item.total_count || totalCount
+    }))
+
     return {
-      data,
+      data: mappedData,
       pagination: {
         totalCount,
         pageSize: pageLimit,
@@ -1298,5 +1314,150 @@ export async function getWarehouseFilterOptions(): Promise<FilterOption[]> {
   } catch (error) {
     console.error('❌ Exception fetching warehouse filter options:', error)
     return []
+  }
+}
+
+// =============================================================================
+// INVOICE ITEMS API
+// =============================================================================
+
+export interface InvoiceItem {
+  item_name: string
+  quantity: number
+  unit_price: number
+  sale_price: number
+  unit_cost: number
+  cost: number
+  unit_profit: number
+  profit: number
+  profit_percentage: number
+}
+
+/**
+ * Get detailed items for a specific invoice with profit calculations
+ */
+export async function getInvoiceItems(invoiceNumber: string): Promise<InvoiceItem[] | null> {
+  try {
+    console.log('📋 Fetching invoice items for invoice:', invoiceNumber)
+
+    const { data, error } = await supabase.rpc('get_invoice_items_with_profit', {
+      invoice_number: invoiceNumber
+    })
+
+    if (error) {
+      console.error('❌ Error fetching invoice items:', error)
+      return null
+    }
+
+    if (!data) {
+      console.log('⚠️ No items found for invoice:', invoiceNumber)
+      return []
+    }
+
+    console.log('✅ Invoice items loaded:', { 
+      invoice: invoiceNumber, 
+      itemCount: data.length,
+      totalProfit: data.reduce((sum: number, item: any) => sum + (item.profit || 0), 0)
+    })
+    
+    return data
+  } catch (error) {
+    console.error('❌ Exception fetching invoice items:', error)
+    return null
+  }
+}
+
+// =============================================================================
+// CSV EXPORT FUNCTIONS - Database Direct Export
+// =============================================================================
+
+/**
+ * Export all invoices for CSV with filters - no pagination limit
+ */
+export async function exportInvoicesForCSV(
+  startDate?: string,
+  endDate?: string,
+  branchFilter?: string,
+  customerFilter?: string,
+  invoiceFilter?: string
+): Promise<OptimizedInvoice[] | null> {
+  try {
+    console.log('📤 Exporting invoices for CSV:', { startDate, endDate, branchFilter, customerFilter, invoiceFilter })
+    
+    // Use existing function with high page limit to get all records
+    const result = await getOptimizedProfitByInvoice(
+      startDate,
+      endDate,
+      branchFilter,
+      customerFilter,
+      invoiceFilter,
+      50000, // High page limit to get all records
+      0      // Start from beginning
+    )
+    
+    if (!result) {
+      console.error('❌ Failed to fetch invoices for export')
+      return null
+    }
+    
+    console.log('✅ Invoices exported for CSV:', { count: result.data.length })
+    return result.data
+  } catch (error) {
+    console.error('❌ Error exporting invoices for CSV:', error)
+    return null
+  }
+}
+
+/**
+ * Export invoices with their items for CSV
+ */
+export async function exportInvoicesWithItemsForCSV(
+  startDate?: string,
+  endDate?: string,
+  branchFilter?: string,
+  customerFilter?: string,
+  invoiceFilter?: string
+): Promise<{ invoices: OptimizedInvoice[], itemsMap: Map<string, InvoiceItem[]> } | null> {
+  try {
+    console.log('📤 Exporting invoices with items for CSV:', { startDate, endDate, branchFilter, customerFilter, invoiceFilter })
+    
+    // First get all invoices
+    const invoices = await exportInvoicesForCSV(startDate, endDate, branchFilter, customerFilter, invoiceFilter)
+    if (!invoices) {
+      return null
+    }
+    
+    // Then batch fetch items for all invoices
+    const itemsMap = new Map<string, InvoiceItem[]>()
+    const batchSize = 10 // Process 10 invoices at a time to avoid overwhelming the API
+    
+    for (let i = 0; i < invoices.length; i += batchSize) {
+      const batch = invoices.slice(i, i + batchSize)
+      
+      // Process batch in parallel
+      const batchPromises = batch.map(async (invoice) => {
+        const items = await getInvoiceItems(invoice.invoice_no)
+        if (items && items.length > 0) {
+          itemsMap.set(invoice.invoice_no, items)
+        }
+      })
+      
+      await Promise.all(batchPromises)
+      
+      // Small delay between batches to be nice to the API
+      if (i + batchSize < invoices.length) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    }
+    
+    console.log('✅ Invoices with items exported for CSV:', { 
+      invoiceCount: invoices.length, 
+      itemsCount: itemsMap.size 
+    })
+    
+    return { invoices, itemsMap }
+  } catch (error) {
+    console.error('❌ Error exporting invoices with items for CSV:', error)
+    return null
   }
 }
