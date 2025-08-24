@@ -517,7 +517,7 @@ export async function getOptimizedProfitByInvoice(
     console.log('✅ Profit by invoice loaded:', { records: data.length, totalCount })
 
     // Map the RPC response fields to match our interface
-    const mappedData = data.map((item: any) => ({
+    const mappedData = data.map((item: Record<string, unknown>) => ({
       invoice_no: item.inv_no || item.invoice_no,
       inv_date: item.inv_date,
       customer_name: item.customer_name,
@@ -1357,7 +1357,7 @@ export async function getInvoiceItems(invoiceNumber: string): Promise<InvoiceIte
     console.log('✅ Invoice items loaded:', { 
       invoice: invoiceNumber, 
       itemCount: data.length,
-      totalProfit: data.reduce((sum: number, item: any) => sum + (item.profit || 0), 0)
+      totalProfit: data.reduce((sum: number, item: Record<string, unknown>) => sum + ((item.profit as number) || 0), 0)
     })
     
     return data

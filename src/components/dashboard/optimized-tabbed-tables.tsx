@@ -6,13 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Package, Users, FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2 } from "lucide-react"
+import { FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2, Package } from "lucide-react"
 import { 
-  useOptimizedProfitByItem, 
-  useOptimizedProfitByCustomer, 
   useOptimizedProfitByInvoice, 
   useOptimizedStockReport,
-  useItemFilterOptions,
   useCustomerFilterOptions,
   useInvoiceFilterOptions,
   useWarehouseFilterOptions,
@@ -34,21 +31,13 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   const { t } = useLocale()
   
   // Dual state management for immediate UI vs deferred content rendering
-  const [activeTab, setActiveTab] = React.useState("items")        // Immediate visual feedback
-  const [contentTab, setContentTab] = React.useState("items")      // Deferred content rendering
+  const [activeTab, setActiveTab] = React.useState("invoices")     // Immediate visual feedback
+  const [contentTab, setContentTab] = React.useState("invoices")   // Deferred content rendering
   const [switchingTab, setSwitchingTab] = React.useState(false)    // Transition state
-  
-  // Filter states for all tables (no search filters)
-  const [itemFilter, setItemFilter] = React.useState<string | undefined>(undefined)
-  const [itemCustomerFilter, setItemCustomerFilter] = React.useState<string | undefined>(undefined)
-  const [itemInvoiceFilter, setItemInvoiceFilter] = React.useState<string | undefined>(undefined)
   
   // Profit by invoice filters
   const [invoiceCustomerFilter, setInvoiceCustomerFilter] = React.useState<string | undefined>(undefined)
   const [invoiceNumberFilter, setInvoiceNumberFilter] = React.useState<string | undefined>(undefined)
-  
-  // Profit by customer filter
-  const [customerOnlyFilter, setCustomerOnlyFilter] = React.useState<string | undefined>(undefined)
   
   // Stock report filter
   const [warehouseFilter, setWarehouseFilter] = React.useState<string | undefined>(undefined)
@@ -69,28 +58,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
     }, 0)
   }, [])
 
-  // Data hooks - Load all 2025 data initially, filter client-side
-  const {
-    data: itemData,
-    loading: itemLoading,
-    loadingMore: itemLoadingMore,
-    showingAll: itemShowingAll,
-    hasMore: itemHasMore,
-    loadAllData: loadAllItemData
-  } = useOptimizedProfitByItem(
-    dateRange, 
-    branchFilter, 
-    10000, // Load all 2025 data
-    itemFilter,
-    itemCustomerFilter,
-    itemInvoiceFilter
-  )
-
-  const {
-    data: customerData,
-    loading: customerLoading
-  } = useOptimizedProfitByCustomer(dateRange, branchFilter, customerOnlyFilter)
-
+  // Data hooks
   const {
     data: invoiceData,
     loading: invoiceLoading,
@@ -103,20 +71,13 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   // Debug logging
   React.useEffect(() => {
     console.log('🔍 Debug data status:', {
-      itemData: itemData?.length || 0,
-      itemLoading,
       invoiceData: invoiceData?.length || 0,
-      invoiceLoading,
-      customerData: customerData?.length || 0,
-      customerLoading
+      invoiceLoading
     })
-    if (itemData?.length > 0) {
-      console.log('📊 Sample item data:', itemData[0])
-    }
     if (invoiceData?.length > 0) {
       console.log('📋 Sample invoice data:', invoiceData[0])
     }
-  }, [itemData, invoiceData, customerData, itemLoading, invoiceLoading, customerLoading])
+  }, [invoiceData, invoiceLoading])
 
   const {
     data: stockData,
@@ -124,11 +85,6 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   } = useOptimizedStockReport(warehouseFilter)
 
   // Get filter options for dropdown filters
-  const {
-    options: itemFilterOptions,
-    loading: itemFilterOptionsLoading
-  } = useItemFilterOptions(dateRange, branchFilter)
-
   const {
     options: customerFilterOptions,
     loading: customerFilterOptionsLoading
@@ -146,14 +102,11 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
 
   // Data is already filtered by database, no client-side filtering needed
   // However, we implement a simple pagination display for better UX
-  const [showAllItems, setShowAllItems] = React.useState(false)
   const [showAllInvoices, setShowAllInvoices] = React.useState(false)
   const [expandedInvoices, setExpandedInvoices] = React.useState<Set<string>>(new Set())
   const [isExporting, setIsExporting] = React.useState(false)
 
-  const displayItemData = showAllItems ? itemData : itemData.slice(0, itemsPerPage)
   const displayInvoiceData = showAllInvoices ? invoiceData : invoiceData.slice(0, itemsPerPage)
-  const displayCustomerData = customerData
   const displayStockData = stockData
 
   // Helper function to toggle invoice expansion
@@ -161,6 +114,11 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
     if (event) {
       event.preventDefault()
       event.stopPropagation()
+      
+      // Prevent automatic scroll to focus for mouse clicks
+      if (event.type === 'click') {
+        event.currentTarget.blur()
+      }
     }
     
     setExpandedInvoices(prev => {
@@ -227,7 +185,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
     }
   }
 
-  const handleExportSingleInvoice = async (invoice: any, items?: any[]) => {
+  const handleExportSingleInvoice = async (invoice: Invoice, items?: InvoiceItem[]) => {
     setIsExporting(true)
     try {
       if (items && items.length > 0) {
@@ -243,7 +201,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   }
 
   // Component for expandable invoice row
-  const ExpandableInvoiceRow = ({ invoice, index }: { invoice: any, index: number }) => {
+  const ExpandableInvoiceRow = ({ invoice, index }: { invoice: Invoice, index: number }) => {
     const isExpanded = expandedInvoices.has(invoice.invoice_no)
     const { items, loading: itemsLoading } = useInvoiceItems(isExpanded ? invoice.invoice_no : undefined)
     
@@ -264,9 +222,17 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
             ${index % 2 === 0 ? 'bg-muted/10' : 'bg-background'}
             border-l-4 border-transparent hover:border-l-primary/50
             ${isExpanded ? 'border-l-primary' : ''}
-            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:scroll-auto
           `}
-          onClick={(e) => toggleInvoiceExpansion(invoice.invoice_no, e)}
+          onClick={(e) => {
+            // Remove focus immediately after click to prevent scroll-into-view
+            setTimeout(() => {
+              if (document.activeElement === e.currentTarget) {
+                e.currentTarget.blur()
+              }
+            }, 0)
+            toggleInvoiceExpansion(invoice.invoice_no, e)
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
@@ -575,8 +541,6 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   }
 
   // Calculate totals from COMPLETE dataset (already filtered by database)
-  const customerTotal = displayCustomerData.reduce((sum, item) => sum + (item.total_profit || 0), 0)
-  
   const invoiceTotal = {
     salePrice: displayInvoiceData.reduce((sum, item) => sum + (item.total_sale_price || 0), 0),
     cost: displayInvoiceData.reduce((sum, item) => sum + (item.total_cost || 0), 0),
@@ -616,17 +580,7 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 gap-1 min-h-[44px] h-auto">
-            <TabsTrigger value="items" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Package className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">{t("tables.tabs.profit_by_item")}</span>
-              <span className="sm:hidden">{t("tables.tabs.items_short")}</span>
-            </TabsTrigger>
-            <TabsTrigger value="customers" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">{t("tables.tabs.profit_by_customer")}</span>
-              <span className="sm:hidden">{t("tables.tabs.customers")}</span>
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 gap-1 min-h-[44px] h-auto">
             <TabsTrigger value="invoices" className="flex items-center gap-1 text-xs sm:text-sm min-h-[44px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">{t("tables.tabs.profit_by_invoice")}</span>
@@ -639,346 +593,6 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="items" className="space-y-4">
-            {contentTab !== "items" ? (
-              <div className="flex items-center justify-center h-32">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>{t("common.loading")}</span>
-                </div>
-              </div>
-            ) : itemLoading ? (
-              <TabLoadingState message={t("common.loading")} />
-            ) : (
-              <>
-                <div className="flex flex-col space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">
-                      {t("actions.show_all")} {displayItemData.length} {showAllItems ? t("common.total") : `${itemsPerPage}`} {t("kpi.items")}
-                      <span className="text-green-600 ml-2">• {t("tables.performance_note")}</span>
-                    </div>
-                  </div>
-              
-              <div className="flex flex-col lg:flex-row lg:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("common.filter")}:</span>
-                <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
-                  <SearchableSelect
-                    options={itemFilterOptions}
-                    value={itemFilter}
-                    onValueChange={setItemFilter}
-                    placeholder={t("filters.filter_by_item")}
-                    searchPlaceholder={t("filters.search_items")}
-                    className="w-full sm:w-[200px] sm:max-w-[200px] min-w-0 min-h-[44px]"
-                    loading={itemFilterOptionsLoading}
-                  />
-                  <SearchableSelect
-                    options={customerFilterOptions}
-                    value={itemCustomerFilter}
-                    onValueChange={setItemCustomerFilter}
-                    placeholder={t("filters.filter_by_customer")}
-                    searchPlaceholder={t("filters.search_customers")}
-                    className="w-full sm:w-[200px] sm:max-w-[200px] min-w-0 min-h-[44px]"
-                    loading={customerFilterOptionsLoading}
-                  />
-                  <SearchableSelect
-                    options={invoiceFilterOptions}
-                    value={itemInvoiceFilter}
-                    onValueChange={setItemInvoiceFilter}
-                    placeholder={t("filters.filter_by_invoice")}
-                    searchPlaceholder={t("filters.search_invoices")}
-                    className="w-full sm:w-[180px] sm:max-w-[180px] min-w-0 min-h-[44px]"
-                    loading={invoiceFilterOptionsLoading}
-                  />
-                </div>
-                {(itemFilter || itemCustomerFilter || itemInvoiceFilter) && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      setItemFilter(undefined)
-                      setItemCustomerFilter(undefined)
-                      setItemInvoiceFilter(undefined)
-                    }}
-                    className="whitespace-nowrap min-h-[44px]"
-                  >
-                    {t("tables.clear_all")}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="rounded-md border overflow-hidden">
-              {/* Mobile View */}
-              <div className="md:hidden">
-                <div className="space-y-3 p-3">
-                  {displayItemData.map((item, index) => (
-                    <div 
-                      key={`${item.inv_no}-${index}`} 
-                      className="bg-gradient-to-r from-muted/40 to-muted/20 p-4 rounded-xl space-y-3 shadow-sm hover:shadow-md transition-all duration-200 border border-muted/50 hover:border-primary/20 active:scale-[0.99]"
-                    >
-                      <div className="flex justify-between items-start gap-3">
-                        <div className="text-sm font-semibold text-foreground truncate flex-1">{item.item}</div>
-                        <div className="flex items-center gap-1 flex-shrink-0">
-                          {(item.profit_percent || 0) >= 0 ? (
-                            <TrendingUp className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <TrendingDown className="h-3 w-3 text-red-600" />
-                          )}
-                          <Badge 
-                            variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"} 
-                            className={`text-xs font-bold px-2 py-1 ${
-                              (item.profit_percent || 0) >= 0 
-                                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                                : 'bg-gradient-to-r from-rose-500 to-rose-600'
-                            }`}
-                          >
-                            {(item.profit_percent || 0).toFixed(1)}%
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                        <div>{t("tables.headers.date")}: {formatDateSA(item.inv_date)}</div>
-                        <div>{t("tables.headers.invoice_number")}: {item.inv_no}</div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-3 text-xs">
-                        <div className="bg-green-50 dark:bg-green-950/20 p-2 rounded-lg">
-                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_price")}:</span><br/>
-                          <span className="font-bold text-green-700 dark:text-green-400">{formatCurrencyTable(item.unit_price || 0)}</span>
-                        </div>
-                        <div className="bg-orange-50 dark:bg-orange-950/20 p-2 rounded-lg">
-                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_cost")}:</span><br/>
-                          <span className="font-bold text-orange-700 dark:text-orange-400">{formatCurrencyTable(item.unit_cost || 0)}</span>
-                        </div>
-                        <div className="p-2 rounded-lg bg-muted/30">
-                          <span className="text-muted-foreground font-medium">{t("tables.headers.unit_profit")}:</span><br/>
-                          <div className="flex items-center gap-1 mt-1">
-                            {(item.unit_profit || 0) >= 0 ? (
-                              <TrendingUp className="h-3 w-3 text-green-600" />
-                            ) : (
-                              <TrendingDown className="h-3 w-3 text-red-600" />
-                            )}
-                            <Badge 
-                              variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"} 
-                              className={`text-xs font-bold px-2 py-1 ${
-                                (item.unit_profit || 0) >= 0 
-                                  ? 'bg-gradient-to-r from-green-500 to-green-600' 
-                                  : 'bg-gradient-to-r from-red-500 to-red-600'
-                              }`}
-                            >
-                              {formatCurrencyTable(item.unit_profit || 0)}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Desktop View */}
-              <div className="hidden md:block overflow-x-auto">
-                <Table className="min-w-[600px]">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("tables.headers.date")}</TableHead>
-                      <TableHead>{t("tables.headers.invoice_number")}</TableHead>
-                      <TableHead>{t("tables.headers.item")}</TableHead>
-                      <TableHead className="text-right">{t("tables.headers.unit_price")}</TableHead>
-                      <TableHead className="text-right">{t("tables.headers.unit_cost")}</TableHead>
-                      <TableHead className="text-right">{t("tables.headers.unit_profit")}</TableHead>
-                      <TableHead className="text-right">{t("tables.headers.profit_percentage")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                <TableBody>
-                  {displayItemData.map((item, index) => (
-                    <TableRow key={`${item.inv_no}-${index}`}>
-                      <TableCell>{formatDateSA(item.inv_date)}</TableCell>
-                      <TableCell>{item.inv_no}</TableCell>
-                      <TableCell className="max-w-[200px] truncate">{item.item}</TableCell>
-                      <TableCell className="text-right">{formatCurrencyTable(item.unit_price || 0)}</TableCell>
-                      <TableCell className="text-right">{formatCurrencyTable(item.unit_cost || 0)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {(item.unit_profit || 0) >= 0 ? (
-                            <TrendingUp className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <TrendingDown className="h-3 w-3 text-red-600" />
-                          )}
-                          <Badge 
-                            variant={(item.unit_profit || 0) >= 0 ? "default" : "destructive"}
-                            className={`font-semibold transition-all duration-200 ${
-                              (item.unit_profit || 0) >= 0 
-                                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
-                                : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
-                            }`}
-                          >
-                            {formatCurrencyTable(item.unit_profit || 0)}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge 
-                          variant={(item.profit_percent || 0) >= 0 ? "default" : "destructive"}
-                          className={`font-bold px-3 py-1 transition-all duration-200 shadow-sm ${
-                            (item.profit_percent || 0) >= 0 
-                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700' 
-                              : 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700'
-                          }`}
-                        >
-                          {(item.profit_percent || 0).toFixed(1)}%
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                </Table>
-              </div>
-            </div>
-            {!showAllItems && itemData.length > itemsPerPage && (
-              <div className="flex justify-center pt-4">
-                <Button 
-                  onClick={() => setShowAllItems(true)}
-                  variant="outline"
-                  className="flex items-center gap-2 min-h-[44px]"
-                >
-                  <ChevronDown className="h-4 w-4" />
-                  {t("actions.show_all")} ({itemData.length} {t("kpi.items")})
-                </Button>
-              </div>
-            )}
-              </>
-            )}
-          </TabsContent>
-
-          <TabsContent value="customers" className="space-y-4">
-            {contentTab !== "customers" ? (
-              <div className="flex items-center justify-center h-32">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>{t("common.loading")}</span>
-                </div>
-              </div>
-            ) : customerLoading ? (
-              <TabLoadingState message={t("common.loading")} />
-            ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    {t("actions.show_all")} {displayCustomerData.length} {t("nav.customers")}
-                    <span className="text-green-600 ml-2">• {t("tables.performance_note")}</span>
-                  </div>
-                </div>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-muted/50 p-3 rounded-lg">
-              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t("common.filter")}:</span>
-              <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0 overflow-hidden">
-                <SearchableSelect
-                  options={customerFilterOptions}
-                  value={customerOnlyFilter}
-                  onValueChange={setCustomerOnlyFilter}
-                  placeholder={t("tables.filter_placeholders.customer")}
-                  searchPlaceholder={t("tables.filter_placeholders.customer_search")}
-                  className="w-full sm:w-[300px] sm:max-w-[300px] min-w-0 min-h-[44px]"
-                  loading={customerFilterOptionsLoading}
-                />
-              </div>
-              {customerOnlyFilter && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setCustomerOnlyFilter(undefined)}
-                  className="whitespace-nowrap"
-                >
-                  {t("common.cancel")}
-                </Button>
-              )}
-            </div>
-            <div className="rounded-md border overflow-hidden">
-              {/* Mobile View */}
-              <div className="md:hidden">
-                <div className="p-3 bg-muted/50 border-b">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">{t("tables.headers.total")}</span>
-                    <Badge variant={customerTotal >= 0 ? "default" : "destructive"} className="text-sm">
-                      {formatCurrencyTable(customerTotal)}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="space-y-2 p-3">
-                  {displayCustomerData.map((customer, index) => (
-                    <div 
-                      key={`${customer.customer_name}-${index}`} 
-                      className="flex justify-between items-center p-4 bg-gradient-to-r from-muted/40 to-muted/20 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-muted/50 hover:border-primary/20 active:scale-[0.99]"
-                    >
-                      <div className="text-sm font-semibold text-foreground truncate flex-1 mr-3">{customer.customer_name}</div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {(customer.total_profit || 0) >= 0 ? (
-                          <TrendingUp className="h-3 w-3 text-green-600" />
-                        ) : (
-                          <TrendingDown className="h-3 w-3 text-red-600" />
-                        )}
-                        <Badge 
-                          variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"} 
-                          className={`text-xs font-bold px-3 py-1 shadow-sm ${
-                            (customer.total_profit || 0) >= 0 
-                              ? 'bg-gradient-to-r from-green-500 to-green-600' 
-                              : 'bg-gradient-to-r from-red-500 to-red-600'
-                          }`}
-                        >
-                          {formatCurrencyTable(customer.total_profit || 0)}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Desktop View */}
-              <div className="hidden md:block overflow-x-auto">
-                <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("tables.headers.customer_name")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.profit")}</TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableHead className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
-                    <TableHead className="bg-muted font-semibold text-right">
-                      {formatCurrencyTable(customerTotal)}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayCustomerData.map((customer, index) => (
-                    <TableRow key={`${customer.customer_name}-${index}`}>
-                      <TableCell>{customer.customer_name}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {(customer.total_profit || 0) >= 0 ? (
-                            <TrendingUp className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <TrendingDown className="h-3 w-3 text-red-600" />
-                          )}
-                          <Badge 
-                            variant={(customer.total_profit || 0) >= 0 ? "default" : "destructive"}
-                            className={`font-semibold px-3 py-1 transition-all duration-200 shadow-sm ${
-                              (customer.total_profit || 0) >= 0 
-                                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
-                                : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
-                            }`}
-                          >
-                            {formatCurrencyTable(customer.total_profit || 0)}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                </Table>
-              </div>
-            </div>
-              </>
-            )}
-          </TabsContent>
 
           <TabsContent value="invoices" className="space-y-4">
             {contentTab !== "invoices" ? (

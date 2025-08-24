@@ -28,7 +28,7 @@ export interface InvoiceItem {
 /**
  * Escape CSV field content to handle commas, quotes, and newlines
  */
-function escapeCSVField(field: any): string {
+function escapeCSVField(field: unknown): string {
   if (field === null || field === undefined) return ''
   
   const stringField = String(field)
