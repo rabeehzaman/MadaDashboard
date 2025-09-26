@@ -124,12 +124,14 @@ export function exportStockReportToPDF(
     startY: 25,
     theme: 'striped',
     headStyles: {
-      fillColor: [66, 139, 202], // Bootstrap primary blue
-      textColor: 255,
+      fillColor: [41, 98, 155], // Darker blue for better contrast
+      textColor: [255, 255, 255],
       fontSize: 9,
       fontStyle: 'bold',
       halign: 'center',
-      cellPadding: 2
+      cellPadding: 2,
+      lineWidth: 0.1,
+      lineColor: [41, 98, 155]
     },
     bodyStyles: {
       fontSize: 8,
@@ -174,7 +176,8 @@ export function exportStockReportToPDF(
     didParseCell: function(data) {
       if (data.row.index === 0) { // First row is totals
         data.cell.styles.fontStyle = 'bold'
-        data.cell.styles.fillColor = [240, 240, 240]
+        data.cell.styles.fillColor = [220, 220, 220]
+        data.cell.styles.textColor = [0, 0, 0]
       } else if (data.row.index === 1) { // Separator row
         data.cell.styles.fillColor = [255, 255, 255]
         data.cell.styles.minCellHeight = 2
