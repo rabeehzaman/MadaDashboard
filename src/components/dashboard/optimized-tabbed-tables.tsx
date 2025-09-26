@@ -44,12 +44,6 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   // Stock report filter
   const [warehouseFilter, setWarehouseFilter] = React.useState<string | undefined>(undefined)
 
-  // Stock report sorting
-  const { sortedData: sortedStockData, sortConfig, handleSort } = useSortableData<OptimizedStock>(
-    stockData,
-    { key: null, direction: null }
-  )
-
   // Pagination is now handled server-side
   const itemsPerPage = 25
 
@@ -91,6 +85,12 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
     data: stockData,
     loading: stockLoading
   } = useOptimizedStockReport(warehouseFilter)
+
+  // Stock report sorting
+  const { sortedData: sortedStockData, sortConfig, handleSort } = useSortableData<OptimizedStock>(
+    stockData || [],
+    { key: null, direction: null }
+  )
 
   // Get filter options for dropdown filters
   const {
