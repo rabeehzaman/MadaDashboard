@@ -57,3 +57,4 @@ debug-*.sql
 *mobile-*-fixes*.jpg
 *api-ready.jpg
 screenshot-*.js
+.env*.local

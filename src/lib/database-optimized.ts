@@ -555,20 +555,30 @@ export async function getOptimizedStockReport(warehouseFilter?: string): Promise
   try {
     console.log('📦 Fetching stock report with warehouse filter:', { warehouseFilter })
 
-    // Try filtered function first, fallback to view if it doesn't exist
-    let { data, error } = await supabase.rpc('get_stock_report_filtered', {
+    // Try aggregated function first
+    let { data, error } = await supabase.rpc('get_stock_report_aggregated', {
       warehouse_filter: warehouseFilter || null
     })
+
+    // If aggregated function doesn't exist, try the filtered function
+    if (error) {
+      console.log('⚠️ get_stock_report_aggregated failed, trying get_stock_report_filtered:', error?.message)
+      const fallback = await supabase.rpc('get_stock_report_filtered', {
+        warehouse_filter: warehouseFilter || null
+      })
+      data = fallback.data
+      error = fallback.error
+    }
 
     // If filtered function doesn't exist, try the original view
     if (error) {
       console.log('⚠️ get_stock_report_filtered failed, trying stock_report_view:', error?.message)
       let query = supabase.from('stock_report_view').select('*').order('product_name', { ascending: true })
-      
+
       if (warehouseFilter) {
         query = query.eq('warehouse', warehouseFilter)
       }
-      
+
       const fallback = await query
       data = fallback.data
       error = fallback.error
@@ -579,7 +589,11 @@ export async function getOptimizedStockReport(warehouseFilter?: string): Promise
       return null
     }
 
-    console.log('✅ Stock report loaded:', { items: data?.length || 0 })
+    console.log('✅ Stock report loaded:', {
+      items: data?.length || 0,
+      aggregated: !warehouseFilter ? 'yes' : 'no',
+      warehouse: warehouseFilter || 'All'
+    })
     return data || []
   } catch (error) {
     console.error('❌ Exception fetching stock report:', error)
