@@ -38,9 +38,9 @@ export function exportStockReportToPDF(
     return
   }
 
-  // Create PDF in landscape orientation for better table fit
+  // Create PDF in portrait orientation for more rows
   const doc = new jsPDF({
-    orientation: 'landscape',
+    orientation: 'portrait',
     unit: 'mm',
     format: 'a4'
   })
@@ -60,14 +60,14 @@ export function exportStockReportToPDF(
   // Determine warehouse name for the report
   const warehouseName = warehouseFilter || 'All Warehouses'
 
-  // Add header
-  doc.setFontSize(18)
+  // Add header with reduced size and position
+  doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text(`Stock Report - ${warehouseName}`, 14, 20)
+  doc.text(`Stock Report - ${warehouseName}`, 10, 15)
 
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Generated on: ${dateStr} at ${timeStr}`, 14, 28)
+  doc.text(`Generated on: ${dateStr} at ${timeStr}`, 10, 21)
 
   // Calculate totals
   const totals = {
@@ -88,18 +88,7 @@ export function exportStockReportToPDF(
     'Actual Stock' // Blank column for manual entry
   ]
 
-  // Prepare table data
-  const tableData = stockData.map(item => [
-    item.product_name,
-    formatNumber(item.stock_quantity || 0),
-    formatNumber(item.stock_in_pieces || 0),
-    formatCurrencyTable(item.unit_cost || 0),
-    formatCurrencyTable(item.current_stock_value || 0),
-    formatCurrencyTable(item.stock_value_with_vat || 0),
-    '' // Empty cell for manual stock entry
-  ])
-
-  // Add totals row
+  // Prepare totals row at the top
   const totalsRow = [
     'TOTAL',
     formatNumber(totals.stockQty),
@@ -110,81 +99,96 @@ export function exportStockReportToPDF(
     ''
   ]
 
+  // Prepare table data with totals at the beginning
+  const stockRows = stockData.map(item => [
+    item.product_name,
+    formatNumber(item.stock_quantity || 0),
+    formatNumber(item.stock_in_pieces || 0),
+    formatCurrencyTable(item.unit_cost || 0),
+    formatCurrencyTable(item.current_stock_value || 0),
+    formatCurrencyTable(item.stock_value_with_vat || 0),
+    '' // Empty cell for manual stock entry
+  ])
+
+  // Combine totals row at top with a separator row, then stock data
+  const tableData = [
+    totalsRow,
+    ['', '', '', '', '', '', ''], // Empty separator row
+    ...stockRows
+  ]
+
   // Generate the table with autoTable
   autoTable(doc, {
     head: [headers],
     body: tableData,
-    foot: [totalsRow],
-    startY: 35,
+    startY: 25,
     theme: 'striped',
     headStyles: {
       fillColor: [66, 139, 202], // Bootstrap primary blue
       textColor: 255,
-      fontSize: 10,
+      fontSize: 9,
       fontStyle: 'bold',
-      halign: 'center'
-    },
-    footStyles: {
-      fillColor: [240, 240, 240],
-      textColor: [0, 0, 0],
-      fontSize: 10,
-      fontStyle: 'bold'
+      halign: 'center',
+      cellPadding: 2
     },
     bodyStyles: {
-      fontSize: 9,
-      cellPadding: 3
+      fontSize: 8,
+      cellPadding: 2
     },
     columnStyles: {
       0: { // Product Name
         halign: 'left',
-        cellWidth: 65
+        cellWidth: 50
       },
       1: { // Stock Qty
         halign: 'right',
-        cellWidth: 25
+        cellWidth: 20
       },
       2: { // Stock in Pcs
         halign: 'right',
-        cellWidth: 25
+        cellWidth: 20
       },
       3: { // Unit Cost
         halign: 'right',
-        cellWidth: 30
+        cellWidth: 25
       },
       4: { // Total Cost
         halign: 'right',
-        cellWidth: 35
+        cellWidth: 28
       },
       5: { // Total Cost with VAT
         halign: 'right',
-        cellWidth: 40
+        cellWidth: 32
       },
       6: { // Actual Stock (blank column)
         halign: 'center',
-        cellWidth: 35,
-        minCellHeight: 8 // Ensure enough space for manual writing
+        cellWidth: 25,
+        minCellHeight: 6 // Reduced for more rows
       }
     },
     alternateRowStyles: {
       fillColor: [250, 250, 250]
     },
-    margin: { top: 35, right: 14, bottom: 20, left: 14 },
+    margin: { top: 20, right: 10, bottom: 10, left: 10 },
+    // Style the totals row differently
+    didParseCell: function(data) {
+      if (data.row.index === 0) { // First row is totals
+        data.cell.styles.fontStyle = 'bold'
+        data.cell.styles.fillColor = [240, 240, 240]
+      } else if (data.row.index === 1) { // Separator row
+        data.cell.styles.fillColor = [255, 255, 255]
+        data.cell.styles.minCellHeight = 2
+      }
+    },
     didDrawPage: function(data) {
-      // Add page numbers
+      // Add page numbers with reduced bottom margin
       const pageCount = doc.getNumberOfPages()
       const currentPage = data.pageNumber
-      doc.setFontSize(9)
+      doc.setFontSize(8)
       doc.setFont('helvetica', 'normal')
       const pageText = `Page ${currentPage} of ${pageCount}`
       const pageWidth = doc.internal.pageSize.width
-      doc.text(pageText, pageWidth - 25, doc.internal.pageSize.height - 10)
-
-      // Add note about the Actual Stock column at the bottom of first page
-      if (currentPage === 1) {
-        doc.setFontSize(8)
-        doc.setFont('helvetica', 'italic')
-        doc.text('Note: The "Actual Stock" column is provided for manual entry during physical stock verification.', 14, doc.internal.pageSize.height - 10)
-      }
+      doc.text(pageText, pageWidth - 20, doc.internal.pageSize.height - 5)
     }
   })
 
