@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2, Package, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
+import { FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2, Package, ArrowUp, ArrowDown, ArrowUpDown, FileDown } from "lucide-react"
 import {
   useOptimizedProfitByInvoice,
   useOptimizedStockReport,
@@ -21,6 +21,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { formatCurrencyTable, formatNumber, formatDateSA } from "@/lib/formatting"
 import { useLocale } from "@/i18n/locale-provider"
 import { exportInvoicesToCSV, exportSingleInvoiceWithItemsToCSV, exportInvoicesWithExpandedItems, exportInvoicesDirectFromDB, exportInvoicesWithItemsDirectFromDB } from "@/lib/csv-export"
+import { exportStockReportToPDF } from "@/lib/pdf-export"
 import type { DateRange } from "./date-filter"
 import type { OptimizedStock } from "@/lib/database-optimized"
 
@@ -846,8 +847,8 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 />
               </div>
               {warehouseFilter && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setWarehouseFilter(undefined)}
                   className="whitespace-nowrap"
@@ -855,6 +856,16 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                   {t("common.cancel")}
                 </Button>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportStockReportToPDF(displayStockData, warehouseFilter)}
+                disabled={displayStockData.length === 0}
+                className="whitespace-nowrap flex items-center gap-2"
+              >
+                <FileDown className="h-3 w-3" />
+                {t("actions.export_pdf")}
+              </Button>
             </div>
             <div className="rounded-md border overflow-hidden">
               {/* Mobile View */}

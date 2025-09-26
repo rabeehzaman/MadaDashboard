@@ -97,6 +97,7 @@
       "unit_cost_header": "تكلفة الوحدة",
       "total_cost": "التكلفة الإجمالية",
       "total_cost_with_vat": "التكلفة الإجمالية مع الضريبة",
+      "actual_stock": "المخزون الفعلي",
       "total": "الإجمالي:",
       "invoice_items": "أصناف الفاتورة",
       "item_name": "اسم الصنف",
@@ -170,6 +171,7 @@
   "actions": {
     "show_all": "عرض الكل",
     "export_csv": "تصدير إلى CSV",
+    "export_pdf": "تصدير إلى PDF",
     "export_all": "تصدير جميع الفواتير",
     "export_invoice_items": "تصدير مع العناصر",
     "export_current": "تصدير العرض الحالي",
@@ -177,6 +179,10 @@
     "load_more": "تحميل المزيد",
     "export": "تصدير",
     "refresh": "تحديث"
+  },
+  "report": {
+    "stock_report": "تقرير المخزون",
+    "generated_on": "تم الإنشاء في"
   },
   "messages": {
     "error": "خطأ",

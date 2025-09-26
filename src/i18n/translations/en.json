@@ -97,6 +97,7 @@
       "unit_cost_header": "Unit Cost",
       "total_cost": "Total Cost",
       "total_cost_with_vat": "Total Cost with VAT",
+      "actual_stock": "Actual Stock",
       "total": "Total:",
       "invoice_items": "Invoice Items",
       "item_name": "Item Name",
@@ -170,6 +171,7 @@
   "actions": {
     "show_all": "Show All",
     "export_csv": "Export to CSV",
+    "export_pdf": "Export to PDF",
     "export_all": "Export All Invoices",
     "export_invoice_items": "Export with Items",
     "export_current": "Export Current View",
@@ -177,6 +179,10 @@
     "load_more": "Load More",
     "export": "Export",
     "refresh": "Refresh"
+  },
+  "report": {
+    "stock_report": "Stock Report",
+    "generated_on": "Generated on"
   },
   "messages": {
     "error": "Error",
