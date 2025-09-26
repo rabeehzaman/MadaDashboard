@@ -6,21 +6,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2, Package } from "lucide-react"
-import { 
-  useOptimizedProfitByInvoice, 
+import { FileText, Warehouse, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Download, Building2, Package, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
+import {
+  useOptimizedProfitByInvoice,
   useOptimizedStockReport,
   useCustomerFilterOptions,
   useInvoiceFilterOptions,
   useWarehouseFilterOptions,
   useInvoiceItems
 } from "@/hooks/use-optimized-data"
+import { useSortableData, type SortConfig } from "@/hooks/use-sortable-data"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { formatCurrencyTable, formatNumber, formatDateSA } from "@/lib/formatting"
 import { useLocale } from "@/i18n/locale-provider"
 import { exportInvoicesToCSV, exportSingleInvoiceWithItemsToCSV, exportInvoicesWithExpandedItems, exportInvoicesDirectFromDB, exportInvoicesWithItemsDirectFromDB } from "@/lib/csv-export"
 import type { DateRange } from "./date-filter"
+import type { OptimizedStock } from "@/lib/database-optimized"
 
 interface OptimizedTabbedTablesProps {
   dateRange?: DateRange
@@ -41,6 +43,12 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   
   // Stock report filter
   const [warehouseFilter, setWarehouseFilter] = React.useState<string | undefined>(undefined)
+
+  // Stock report sorting
+  const { sortedData: sortedStockData, sortConfig, handleSort } = useSortableData<OptimizedStock>(
+    stockData,
+    { key: null, direction: null }
+  )
 
   // Pagination is now handled server-side
   const itemsPerPage = 25
@@ -109,8 +117,8 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   const displayInvoiceData = showAllInvoices ? invoiceData : invoiceData.slice(0, itemsPerPage)
   // Filter out items with zero stock quantity
   const displayStockData = React.useMemo(() => {
-    return stockData.filter(item => item.stock_quantity !== 0 && item.stock_quantity !== null)
-  }, [stockData])
+    return sortedStockData.filter(item => item.stock_quantity !== 0 && item.stock_quantity !== null)
+  }, [sortedStockData])
 
   // Helper function to toggle invoice expansion
   const toggleInvoiceExpansion = React.useCallback((invoiceNo: string, event?: React.MouseEvent | React.KeyboardEvent) => {
@@ -908,12 +916,120 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
                 <Table className="min-w-[600px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("tables.headers.name")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.stock_qty")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.stock_in_pcs")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.unit_cost_header")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.total_cost")}</TableHead>
-                    <TableHead className="text-right">{t("tables.headers.total_cost_with_vat")}</TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('product_name')}
+                    >
+                      <div className="flex items-center gap-1">
+                        {t("tables.headers.name")}
+                        {sortConfig.key === 'product_name' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('stock_quantity')}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {t("tables.headers.stock_qty")}
+                        {sortConfig.key === 'stock_quantity' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('stock_in_pieces')}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {t("tables.headers.stock_in_pcs")}
+                        {sortConfig.key === 'stock_in_pieces' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('unit_cost')}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {t("tables.headers.unit_cost_header")}
+                        {sortConfig.key === 'unit_cost' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('current_stock_value')}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {t("tables.headers.total_cost")}
+                        {sortConfig.key === 'current_stock_value' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                      onClick={() => handleSort('stock_value_with_vat')}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {t("tables.headers.total_cost_with_vat")}
+                        {sortConfig.key === 'stock_value_with_vat' ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-3 w-3" />
+                          ) : sortConfig.direction === 'desc' ? (
+                            <ArrowDown className="h-3 w-3" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </div>
+                    </TableHead>
                   </TableRow>
                   <TableRow>
                     <TableHead className="bg-muted font-semibold">{t("tables.headers.total")}</TableHead>
