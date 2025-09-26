@@ -107,7 +107,10 @@ export function OptimizedTabbedTables({ dateRange, branchFilter }: OptimizedTabb
   const [isExporting, setIsExporting] = React.useState(false)
 
   const displayInvoiceData = showAllInvoices ? invoiceData : invoiceData.slice(0, itemsPerPage)
-  const displayStockData = stockData
+  // Filter out items with zero stock quantity
+  const displayStockData = React.useMemo(() => {
+    return stockData.filter(item => item.stock_quantity !== 0 && item.stock_quantity !== null)
+  }, [stockData])
 
   // Helper function to toggle invoice expansion
   const toggleInvoiceExpansion = React.useCallback((invoiceNo: string, event?: React.MouseEvent | React.KeyboardEvent) => {

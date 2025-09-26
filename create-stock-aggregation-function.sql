@@ -24,6 +24,7 @@ RETURNS TABLE (
 BEGIN
     IF warehouse_filter IS NULL OR warehouse_filter = '' THEN
         -- When no warehouse filter, aggregate by product name
+        -- Only show items where the total quantity across all warehouses is not zero
         RETURN QUERY
         SELECT
             s."Name"::TEXT as product_name,
@@ -44,9 +45,11 @@ BEGIN
         WHERE s."Name" IS NOT NULL
             AND s."Warehouse" IS NOT NULL
         GROUP BY s."Name"
+        HAVING SUM(s."Stock Qty") != 0  -- Exclude items where total quantity is zero
         ORDER BY s."Name";
     ELSE
         -- When warehouse filter is specified, return data for that warehouse only
+        -- Exclude items where the quantity for this specific warehouse is zero
         RETURN QUERY
         SELECT
             s."Name"::TEXT as product_name,
@@ -66,6 +69,7 @@ BEGIN
         WHERE s."Name" IS NOT NULL
             AND s."Warehouse" IS NOT NULL
             AND s."Warehouse" = warehouse_filter
+            AND s."Stock Qty" != 0  -- Exclude items with zero quantity
         ORDER BY s."Name";
     END IF;
 END;
